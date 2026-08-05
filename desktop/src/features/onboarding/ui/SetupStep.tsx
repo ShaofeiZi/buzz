@@ -32,6 +32,7 @@ import {
   OnboardingSlideTransition,
 } from "./OnboardingSlideTransition";
 import type { SetupStepActions, SetupStepState } from "./types";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 
 type SetupStepProps = {
   actions: SetupStepActions;
@@ -611,6 +612,7 @@ function RuntimeProvidersSection({
   >;
   runtimeProviders: SetupStepState["runtimeProviders"];
 }) {
+  const { t } = useI18n();
   const { errorMessage, isChecking, items } = runtimeProviders;
   const orderedItems = getVisibleOnboardingRuntimes(items);
 
@@ -618,11 +620,10 @@ function RuntimeProvidersSection({
     <section className="flex min-h-full w-full flex-col items-center">
       <div className="w-full max-w-[820px] text-center">
         <h1 className="text-title font-normal text-foreground">
-          Set up your agent harnesses
+          {t("onboarding.setupHarnesses")}
         </h1>
         <p className="mx-auto mt-3 max-w-[760px] text-sm leading-6 text-foreground/90">
-          Buzz checks for command-line harnesses on this machine. Install the
-          CLI or sign in to at least one to continue.
+          {t("onboarding.setupHarnessesDescription")}
         </p>
       </div>
 
@@ -645,8 +646,7 @@ function RuntimeProvidersSection({
             className="max-w-[560px] rounded-2xl bg-white/70 px-6 py-6 text-sm text-muted-foreground"
             data-testid="onboarding-acp-empty"
           >
-            No supported command-line harnesses were detected yet. Install a
-            supported CLI, then check again.
+            {t("onboarding.noHarnesses")}
           </p>
         )}
 
@@ -666,6 +666,7 @@ function SetupStepContent({
   onReadyRuntimeIdsChange,
   state,
 }: SetupStepContentProps) {
+  const { t } = useI18n();
   const { runtimeProviders } = state;
   const [installResults, setInstallResults] =
     React.useState<InstallResultsState>({});
@@ -708,7 +709,7 @@ function SetupStepContent({
             onClick={() => actions.next(readyRuntimeIds)}
             type="button"
           >
-            Next
+            {t("common.next")}
           </Button>
           <Button
             className="absolute left-full ml-3 h-9 animate-in whitespace-nowrap rounded-full px-6 text-sm fade-in fill-mode-backwards [animation-delay:1000ms] animation-duration-[500ms] hover:bg-foreground/10 motion-reduce:animate-none"
@@ -717,7 +718,7 @@ function SetupStepContent({
             type="button"
             variant="ghost"
           >
-            Skip for now
+            {t("onboarding.skipForNow")}
           </Button>
         </div>
 
@@ -728,11 +729,11 @@ function SetupStepContent({
           type="button"
           variant="ghost"
         >
-          Back
+          {t("common.back")}
         </Button>
 
         <p className="text-xs text-foreground/50">
-          More harnesses (Cursor, Grok, Amp&hellip;){" "}
+          {t("onboarding.moreHarnessesPrefix")}{" "}
           {actions.navigateToAgentSettings ? (
             <button
               className="text-foreground/70 underline underline-offset-2 hover:text-foreground"
@@ -745,7 +746,7 @@ function SetupStepContent({
           ) : (
             <span className="text-foreground/70">Settings → Agents</span>
           )}{" "}
-          after setup.
+          {t("onboarding.moreHarnessesSuffix")}
         </p>
       </OnboardingFooter>
     </OnboardingSlideTransition>

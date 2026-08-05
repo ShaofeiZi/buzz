@@ -12,6 +12,7 @@ import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Spinner } from "@/shared/ui/spinner";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 import {
   ONBOARDING_PRIMARY_CTA_CLASS,
   ONBOARDING_SECONDARY_CTA_CLASS,
@@ -50,6 +51,7 @@ export function NostrKeyImportForm({
   onStageChange,
   variant = "default",
 }: NostrKeyImportFormProps) {
+  const { t } = useI18n();
   const [nsecInput, setNsecInput] = React.useState("");
   const [passphrase, setPassphrase] = React.useState("");
   const [isImporting, setIsImporting] = React.useState(false);
@@ -148,10 +150,10 @@ export function NostrKeyImportForm({
     if (!isValid) {
       setImportError(
         isPasswordStage
-          ? "Enter the password for this key backup."
+          ? t("keyImport.passwordRequired")
           : isEncryptedInput
-            ? "That doesn't look like a complete ncryptsec backup."
-            : "That doesn't look like a valid nsec. Paste an nsec1 key.",
+            ? t("keyImport.incompleteEncrypted")
+            : t("keyImport.invalid"),
       );
       return;
     }
@@ -163,7 +165,7 @@ export function NostrKeyImportForm({
       await onImport(trimmedInput, isPasswordStage ? passphrase : undefined);
     } catch (error) {
       setImportError(
-        error instanceof Error ? error.message : "Couldn't import this key.",
+        error instanceof Error ? error.message : t("keyImport.importFailed"),
       );
     } finally {
       setIsImporting(false);
@@ -175,6 +177,7 @@ export function NostrKeyImportForm({
     isValid,
     onImport,
     passphrase,
+    t,
     trimmedInput,
   ]);
 
@@ -208,7 +211,7 @@ export function NostrKeyImportForm({
             )}
             htmlFor="nostr-private-key"
           >
-            Private key
+            {t("keyImport.privateKey")}
           </label>
           {variant === "spotlight" ? (
             <Card
@@ -230,7 +233,7 @@ export function NostrKeyImportForm({
                     setNsecInput(event.target.value);
                     setImportError(null);
                   }}
-                  placeholder="Enter your key here"
+                  placeholder={t("keyImport.placeholder")}
                   ref={inputRef}
                   spellCheck={false}
                   type={isRevealed ? "text" : "password"}
@@ -241,7 +244,7 @@ export function NostrKeyImportForm({
                 <Button
                   aria-hidden={!hasInput}
                   aria-label={
-                    isRevealed ? "Hide private key" : "Reveal private key"
+                    isRevealed ? t("keyImport.hide") : t("keyImport.reveal")
                   }
                   className={cn(
                     "absolute right-8 top-1/2 h-10 w-10 -translate-y-1/2 text-muted-foreground transition-opacity duration-300 hover:bg-foreground/10 hover:text-foreground motion-reduce:transition-none",
@@ -273,7 +276,7 @@ export function NostrKeyImportForm({
                 setNsecInput(event.target.value);
                 setImportError(null);
               }}
-              placeholder="nsec1..."
+              placeholder={t("keyImport.defaultPlaceholder")}
               ref={inputRef}
               spellCheck={false}
               type="password"
@@ -464,7 +467,7 @@ export function NostrKeyImportForm({
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <div className="min-w-0 space-y-0.5">
                   <p className="font-medium text-foreground">
-                    This will use this Nostr identity:
+                    {t("keyImport.identityPreview")}
                   </p>
                   <p className="break-all font-mono text-2xs text-muted-foreground">
                     {previewNpub}
@@ -477,8 +480,8 @@ export function NostrKeyImportForm({
           {showInvalidHint && !errorMessage ? (
             <p className="text-sm text-muted-foreground">
               {isEncryptedInput
-                ? "Waiting for a complete ncryptsec backup"
-                : "Waiting for a valid nsec1 key"}
+                ? t("keyImport.waitingEncrypted")
+                : t("keyImport.waitingNsec")}
             </p>
           ) : null}
 
@@ -507,11 +510,14 @@ export function NostrKeyImportForm({
           type="button"
         >
           {isImporting ? (
-            <Spinner aria-label="Importing key" className="h-4 w-4 border-2" />
+            <Spinner
+              aria-label={t("keyImport.importing")}
+              className="h-4 w-4 border-2"
+            />
           ) : variant === "spotlight" ? (
-            "Next"
+            t("common.next")
           ) : (
-            "Continue with this key"
+            t("keyImport.continue")
           )}
         </Button>
 
@@ -526,7 +532,7 @@ export function NostrKeyImportForm({
           type="button"
           variant="ghost"
         >
-          {isPasswordStage ? "Back" : backLabel}
+          {isPasswordStage ? t("common.back") : backLabel}
         </Button>
       </OnboardingFooter>
     </form>

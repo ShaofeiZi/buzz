@@ -78,7 +78,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/shared/ui/sidebar";
-
+import { useI18n } from "@/shared/i18n/I18nProvider";
 type AppSidebarProps = {
   addCommunityPrefill?: AddCommunityPrefillRequest | null;
   activeCommunity: Community | null;
@@ -240,6 +240,7 @@ export function AppSidebar({
   onStarChannel,
   onUnstarChannel,
 }: AppSidebarProps) {
+  const { t } = useI18n();
   const activeWorkingByChannelId = useActiveWorkingChannelsById();
   const { status: updateStatus } = useUpdaterContext();
   const canShowSidebarUpdateCard = shouldShowSidebarUpdateCard(updateStatus);
@@ -742,7 +743,7 @@ export function AppSidebar({
                       }
                       actionsTestId="section-actions-channels"
                       listTestId="stream-list"
-                      quickCreateLabel="Browse channels"
+                      quickCreateLabel={t("sidebar.browseChannels")}
                       onQuickCreateClick={() => onBrowseChannels?.()}
                       showQuickCreate
                       onMarkAllRead={onMarkAllChannelsRead}
@@ -751,7 +752,7 @@ export function AppSidebar({
                       onSelectChannel={onSelectChannel}
                       onToggleCollapsed={() => toggleCollapsedGroup("channels")}
                       selectedChannelId={selectedChannelId}
-                      title="Channels"
+                      title={t("sidebar.channels")}
                       unreadChannelCounts={unreadChannelCounts}
                       unreadChannelIds={unreadChannelIds}
                       sections={channelSections}
@@ -771,7 +772,7 @@ export function AppSidebar({
                   </SidebarDndContext>
                   <FeatureGate feature="forum">
                     <ChannelGroupSection
-                      createLabel="New forum"
+                      createLabel={t("sidebar.newForum")}
                       hasUnread={unreadChannelIds.size > 0}
                       isCollapsed={collapsedGroups.forums}
                       isActiveChannel={selectedView === "channel"}
@@ -790,7 +791,7 @@ export function AppSidebar({
                       onSelectChannel={onSelectChannel}
                       onToggleCollapsed={() => toggleCollapsedGroup("forums")}
                       selectedChannelId={selectedChannelId}
-                      title="Forums"
+                      title={t("sidebar.forums")}
                       unreadChannelCounts={unreadChannelCounts}
                       unreadChannelIds={unreadChannelIds}
                       mutedChannelIds={mutedChannelIds}
@@ -803,7 +804,7 @@ export function AppSidebar({
                     action={
                       <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2 items-center gap-0.5">
                         <SectionQuickAction
-                          label="New message"
+                          label={t("sidebar.newMessage")}
                           onClick={onNewMessage}
                           testId="section-actions-dms-quick-create"
                         />
@@ -835,7 +836,7 @@ export function AppSidebar({
                     presenceByChannelId={dmPresenceByChannelId}
                     selectedChannelId={selectedChannelId}
                     testId="dm-list"
-                    title="Direct messages"
+                    title={t("sidebar.directMessages")}
                     sectionActionsOpen={dmActionsMenuOpen}
                     unreadChannelCounts={unreadChannelCounts}
                     unreadChannelIds={unreadChannelIds}

@@ -17,6 +17,7 @@ import { PoofBurstProvider } from "@/shared/ui/PoofBurstProvider";
 import { Toaster } from "@/shared/ui/sonner";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { recoverLocalStorageQuotaOnStartup } from "@/shared/lib/localStorageQuota";
+import { I18nProvider } from "@/shared/i18n/I18nProvider";
 
 type E2eWindow = Window & {
   __BUZZ_E2E__?: unknown;
@@ -76,23 +77,27 @@ function configureDevE2eBridgeFromUrl() {
 function renderApp() {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
-      <CommunitiesProvider>
-        <CommunityOnboardingProvider enabled={huddleWindowChannelId() === null}>
-          <ThemeProvider defaultTheme="buzz">
-            <TooltipProvider delayDuration={300}>
-              <EmojiBurstProvider>
-                <PoofBurstProvider>
-                  <UpdaterProvider>
-                    <App />
-                    <NostrBindConsentDialog />
-                  </UpdaterProvider>
-                  <Toaster />
-                </PoofBurstProvider>
-              </EmojiBurstProvider>
-            </TooltipProvider>
-          </ThemeProvider>
-        </CommunityOnboardingProvider>
-      </CommunitiesProvider>
+      <I18nProvider>
+        <CommunitiesProvider>
+          <CommunityOnboardingProvider
+            enabled={huddleWindowChannelId() === null}
+          >
+            <ThemeProvider defaultTheme="buzz">
+              <TooltipProvider delayDuration={300}>
+                <EmojiBurstProvider>
+                  <PoofBurstProvider>
+                    <UpdaterProvider>
+                      <App />
+                      <NostrBindConsentDialog />
+                    </UpdaterProvider>
+                    <Toaster />
+                  </PoofBurstProvider>
+                </EmojiBurstProvider>
+              </TooltipProvider>
+            </ThemeProvider>
+          </CommunityOnboardingProvider>
+        </CommunitiesProvider>
+      </I18nProvider>
     </React.StrictMode>,
   );
 }

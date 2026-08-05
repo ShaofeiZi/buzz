@@ -20,6 +20,8 @@ import { useSystemColorScheme } from "@/shared/theme/useSystemColorScheme";
 import { Button } from "@/shared/ui/button";
 import { Card } from "@/shared/ui/card";
 import { StartupWindowDragRegion } from "@/shared/ui/StartupWindowDragRegion";
+import { useI18n } from "@/shared/i18n/I18nProvider";
+import { LanguageSelector } from "@/shared/i18n/LanguageSelector";
 
 type WelcomeSetupPage = "welcome" | "existing" | "join" | "member" | "owned";
 type WelcomeTransitionMode = "initial" | OnboardingTransitionDirection;
@@ -38,6 +40,7 @@ export function WelcomeSetup({
   initialTransitionMode = "initial",
   onBack,
 }: WelcomeSetupProps) {
+  const { t } = useI18n();
   const [page, setPage] = React.useState<WelcomeSetupPage>(initialPage);
   const [transitionMode, setTransitionMode] =
     React.useState<WelcomeTransitionMode>(initialTransitionMode);
@@ -55,7 +58,7 @@ export function WelcomeSetup({
   const npubError = identityQuery.error
     ? identityQuery.error instanceof Error
       ? identityQuery.error.message
-      : "Could not load your public key."
+      : t("community.publicKeyLoadFailed")
     : null;
 
   const showPage = React.useCallback(
@@ -103,6 +106,9 @@ export function WelcomeSetup({
       data-system-color-scheme={systemColorScheme}
     >
       <StartupWindowDragRegion />
+      <div className="fixed right-6 top-8 z-30">
+        <LanguageSelector compact />
+      </div>
       <OnboardingChrome current={5} />
       <OnboardingFooterProvider>
         <div className="relative flex min-h-0 w-full max-w-[920px] flex-1 flex-col items-center text-center">
@@ -116,11 +122,10 @@ export function WelcomeSetup({
             >
               <div className="w-full max-w-[760px]">
                 <h1 className="text-title font-normal">
-                  Join or create a community
+                  {t("community.setupTitle")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
-                  Join with an invite, create your own community, or reconnect
-                  one you already have.
+                  {t("community.setupDescription")}
                 </p>
               </div>
               <div className="flex w-full flex-1 translate-y-16 flex-col items-center justify-center gap-20 py-8">
@@ -134,7 +139,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("join")}
                     type="button"
                   >
-                    Join a community
+                    {t("community.join")}
                   </button>
                 </Card>
                 <Card
@@ -147,7 +152,7 @@ export function WelcomeSetup({
                     onClick={() => setIsHostedSignInOpen(true)}
                     type="button"
                   >
-                    Create a community
+                    {t("community.create")}
                   </button>
                 </Card>
                 <Card
@@ -160,7 +165,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("existing")}
                     type="button"
                   >
-                    I already have a community
+                    {t("community.alreadyHave")}
                   </button>
                 </Card>
               </div>
@@ -172,7 +177,7 @@ export function WelcomeSetup({
                   type="button"
                   variant="ghost"
                 >
-                  Back
+                  {t("common.back")}
                 </Button>
               </OnboardingFooter>
             </OnboardingSlideTransition>
@@ -185,10 +190,10 @@ export function WelcomeSetup({
             >
               <div className="w-full max-w-[760px]">
                 <h1 className="text-title font-normal">
-                  Reconnect to your community
+                  {t("community.reconnectTitle")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
-                  Tell us your role so we can find the fastest way back in.
+                  {t("community.reconnectRole")}
                 </p>
               </div>
               <div className="flex w-full flex-1 translate-y-16 flex-col items-center justify-center gap-20 py-8">
@@ -202,7 +207,7 @@ export function WelcomeSetup({
                     onClick={() => setIsHostedSignInOpen(true)}
                     type="button"
                   >
-                    I own the community
+                    {t("community.owner")}
                   </button>
                 </Card>
                 <Card
@@ -215,7 +220,7 @@ export function WelcomeSetup({
                     onClick={() => showPage("member")}
                     type="button"
                   >
-                    I’m a member or admin
+                    {t("community.memberOrAdmin")}
                   </button>
                 </Card>
               </div>
@@ -227,7 +232,7 @@ export function WelcomeSetup({
                   type="button"
                   variant="ghost"
                 >
-                  Back
+                  {t("common.back")}
                 </Button>
               </OnboardingFooter>
             </OnboardingSlideTransition>
@@ -248,13 +253,13 @@ export function WelcomeSetup({
               <div className="w-full max-w-[620px]">
                 <h1 className="text-title font-normal">
                   {page === "member"
-                    ? "Reconnect to your community"
-                    : "Join a community"}
+                    ? t("community.reconnectTitle")
+                    : t("community.join")}
                 </h1>
                 <p className="mt-3 text-sm leading-6 text-foreground/80">
                   {page === "member"
-                    ? "Enter the community URL or an invite link. Your role will be restored when you connect."
-                    : "Enter the invite link or community URL you received."}
+                    ? t("community.reconnectDescription")
+                    : t("community.joinDescription")}
                 </p>
               </div>
               <div className="flex w-full flex-1 flex-col items-center justify-center gap-16">
@@ -266,28 +271,26 @@ export function WelcomeSetup({
                   }
                   onConnect={startConnection}
                   onRedeem={redeemInvite}
-                  placeholder="Invite link or community URL"
+                  placeholder={t("community.inputPlaceholder")}
                   variant="onboarding-spotlight"
                 />
                 {page === "join" ? (
                   <div className="w-full max-w-[560px] text-left">
                     <p className="text-sm font-medium text-foreground">
-                      Joining a private community?
+                      {t("community.privateTitle")}
                     </p>
                     <p className="mt-2 text-sm leading-6 text-foreground/75">
-                      Some communities need the owner to add you before you can
-                      join. Copy your public ID and send it to the community
-                      owner.
+                      {t("community.privateDescription")}
                     </p>
                     <div className="mt-4 flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/35 px-4 py-3">
                       <code
                         className="min-w-0 flex-1 truncate font-mono text-xs text-foreground/80"
                         data-testid="welcome-join-npub"
                       >
-                        {npub || "Loading…"}
+                        {npub || t("common.loading")}
                       </code>
                       <Button
-                        aria-label="Copy public ID"
+                        aria-label={t("community.copyPublicId")}
                         className="h-9 shrink-0 rounded-full px-3"
                         disabled={!npub}
                         onClick={() => {
@@ -305,7 +308,9 @@ export function WelcomeSetup({
                         ) : (
                           <Copy className="h-4 w-4" aria-hidden="true" />
                         )}
-                        <span>{copiedNpub ? "Copied" : "Copy"}</span>
+                        <span>
+                          {copiedNpub ? t("common.copied") : t("common.copy")}
+                        </span>
                       </Button>
                     </div>
                     {npubError ? (

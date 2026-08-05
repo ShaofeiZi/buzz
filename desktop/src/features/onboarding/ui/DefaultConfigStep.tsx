@@ -32,6 +32,7 @@ import {
   getVisibleOnboardingRuntimes,
 } from "./onboardingRuntimeSelection";
 import type { DefaultConfigDraft, DefaultConfigStepActions } from "./types";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 
 type DefaultConfigStepProps = {
   actions: DefaultConfigStepActions;
@@ -307,6 +308,7 @@ export function DefaultConfigStep({
   draft,
   readyRuntimeIds,
 }: DefaultConfigStepProps) {
+  const { t } = useI18n();
   const [persistenceState, setPersistenceState] = React.useState<{
     canComplete: boolean;
     commit: () => Promise<void>;
@@ -326,12 +328,12 @@ export function DefaultConfigStep({
       setSaveError(
         cause instanceof Error
           ? cause.message
-          : "Couldn’t save model settings.",
+          : t("onboarding.saveModelFailed"),
       );
     } finally {
       setIsSaving(false);
     }
-  }, [actions, isSaving, persistenceState]);
+  }, [actions, isSaving, persistenceState, t]);
 
   const handleSkip = React.useCallback(() => {
     actions.discardDraft();
@@ -347,12 +349,10 @@ export function DefaultConfigStep({
     >
       <div className="w-full max-w-[500px] text-center">
         <h1 className="text-title font-normal text-foreground">
-          Configure your default model settings
+          {t("onboarding.configureDefaults")}
         </h1>
         <p className="mx-auto mt-3 max-w-[440px] text-sm leading-5 text-foreground/80">
-          This will be set as your default model configuration across Buzz. You
-          can always change this in your Settings or give specific agents a
-          different configuration.
+          {t("onboarding.configureDefaultsDescription")}
         </p>
       </div>
 
@@ -378,7 +378,7 @@ export function DefaultConfigStep({
             onClick={() => void handleComplete()}
             type="button"
           >
-            {isSaving ? "Saving…" : "Next"}
+            {isSaving ? t("onboarding.saving") : t("common.next")}
           </Button>
           <Button
             className="absolute left-full ml-3 h-9 animate-in whitespace-nowrap rounded-full px-6 text-sm fade-in fill-mode-backwards [animation-delay:1000ms] animation-duration-[500ms] hover:bg-foreground/10 motion-reduce:animate-none"
@@ -388,7 +388,7 @@ export function DefaultConfigStep({
             type="button"
             variant="ghost"
           >
-            Skip for now
+            {t("onboarding.skipForNow")}
           </Button>
         </div>
 
@@ -400,7 +400,7 @@ export function DefaultConfigStep({
           type="button"
           variant="ghost"
         >
-          Back
+          {t("common.back")}
         </Button>
 
         {saveError ? (
@@ -409,14 +409,14 @@ export function DefaultConfigStep({
             data-testid="onboarding-config-save-error"
             role="alert"
           >
-            Couldn’t save model settings. {saveError} Try again.
+            {t("onboarding.saveModelFailed")} {saveError} {t("common.retry")}.
           </p>
         ) : null}
 
         <p className="text-xs text-foreground/50">
-          Configure default models in{" "}
-          <span className="text-foreground/70">Settings → Agents</span> after
-          setup.
+          {t("onboarding.configureModelsLater", {
+            settings: "Settings → Agents",
+          })}
         </p>
       </OnboardingFooter>
     </OnboardingSlideTransition>

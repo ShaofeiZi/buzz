@@ -16,6 +16,7 @@ import {
   OnboardingSlideTransition,
 } from "./OnboardingSlideTransition";
 import type { ProfileStepActions, ProfileStepState } from "./types";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 
 type ProfileStepProps = {
   actions: ProfileStepActions;
@@ -193,6 +194,7 @@ export function ProfileStep({
   state,
   usesExistingIdentity = false,
 }: ProfileStepProps) {
+  const { t } = useI18n();
   const {
     advanceWithoutSaving,
     back,
@@ -221,11 +223,10 @@ export function ProfileStep({
     >
       <div className="w-full max-w-2xl">
         <h1 className="text-title font-normal text-foreground">
-          What should we call you?
+          {t("profile.callYou")}
         </h1>
         <p className="mt-5 text-sm leading-6 text-muted-foreground">
-          Pick the name people and agents will see in Buzz. You can change it
-          anytime.
+          {t("profile.callYouDescription")}
         </p>
       </div>
 
@@ -233,7 +234,7 @@ export function ProfileStep({
         className="mt-12 flex w-full cursor-text flex-col items-center"
         htmlFor="onboarding-display-name"
       >
-        <span className="sr-only">Name</span>
+        <span className="sr-only">{t("profile.name")}</span>
         <div className="relative h-20 w-full max-w-[576px]">
           {!hasDisplayNameDraft ? (
             <div
@@ -245,12 +246,12 @@ export function ProfileStep({
                   aria-hidden="true"
                   className="buzz-onboarding-name-placeholder-caret h-[0.9em] w-0.5 rounded-full bg-primary"
                 />
-                Enter your name
+                {t("profile.enterName")}
               </span>
             </div>
           ) : null}
           <input
-            aria-label="Name"
+            aria-label={t("profile.name")}
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect="off"
@@ -288,11 +289,14 @@ export function ProfileStep({
           type="button"
         >
           {isSaving ? (
-            <Spinner aria-label="Saving profile" className="h-4 w-4 border-2" />
+            <Spinner
+              aria-label={t("profile.saving")}
+              className="h-4 w-4 border-2"
+            />
           ) : usesExistingIdentity ? (
-            "Continue"
+            t("common.continue")
           ) : (
-            "Create an identity key"
+            t("profile.createIdentity")
           )}
         </Button>
 
@@ -305,7 +309,7 @@ export function ProfileStep({
             type="button"
             variant="ghost"
           >
-            Back
+            {t("common.back")}
           </Button>
         ) : null}
 
@@ -318,7 +322,7 @@ export function ProfileStep({
             type="button"
             variant="ghost"
           >
-            I already have a key
+            {t("profile.existingKey")}
           </Button>
         ) : null}
 
@@ -332,7 +336,7 @@ export function ProfileStep({
               type="button"
               variant="ghost"
             >
-              Skip for now
+              {t("onboarding.skipForNow")}
             </Button>
           ) : null}
           {saveRecovery.canAdvanceWithoutSaving ? (
@@ -343,7 +347,7 @@ export function ProfileStep({
               type="button"
               variant="ghost"
             >
-              Continue without saving
+              {t("profile.continueWithoutSaving")}
             </Button>
           ) : null}
           <div className="flex-1" />

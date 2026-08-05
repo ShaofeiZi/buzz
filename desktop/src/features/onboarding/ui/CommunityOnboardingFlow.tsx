@@ -38,6 +38,7 @@ import {
   OnboardingChrome,
 } from "./OnboardingChrome";
 import { OnboardingFooter, OnboardingFooterProvider } from "./OnboardingFooter";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 
 function isRelayMembershipDeniedError(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
@@ -148,6 +149,7 @@ export function CommunityOnboardingFlow({
   onCancel: () => void;
   onConnect: () => void;
 }) {
+  const { t } = useI18n();
   const { transaction, update, clear } = useCommunityOnboarding();
   const queryClient = useQueryClient();
   const systemColorScheme = useSystemColorScheme();
@@ -484,18 +486,20 @@ export function CommunityOnboardingFlow({
             <>
               <Users className="mx-auto h-10 w-10" />
               <h1 className="mt-5 text-title font-normal">
-                Joining {transaction.communityName}
+                {t("community.joining", {
+                  community: transaction.communityName,
+                })}
               </h1>
               <p className="mt-3 text-sm text-foreground/80">
                 {transaction.error ??
                   (transaction.stage === "claiming"
-                    ? "Accepting your invite…"
-                    : "Connecting securely…")}
+                    ? t("community.acceptingInvite")
+                    : t("community.connectingSecurely"))}
               </p>
               <div className="mt-6 flex justify-center gap-3">
                 {transaction.error ? (
                   <Button className="rounded-full px-6" onClick={retry}>
-                    Retry
+                    {t("common.retry")}
                   </Button>
                 ) : null}
                 <Button
@@ -503,7 +507,7 @@ export function CommunityOnboardingFlow({
                   onClick={onCancel}
                   variant="ghost"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </div>
             </>
@@ -518,17 +522,20 @@ export function CommunityOnboardingFlow({
                 data-testid="community-profile-main"
               >
                 <div className="shrink-0">
-                  <h1 className="text-title font-normal">Build your profile</h1>
+                  <h1 className="text-title font-normal">
+                    {t("community.buildProfile")}
+                  </h1>
                   <p className="mx-auto mt-3 max-w-[380px] text-sm leading-6 text-foreground/80">
-                    Add a name and avatar. They’ll show up on your messages,
-                    reactions, and agent handoffs.
+                    {t("community.buildProfileDescription")}
                   </p>
                 </div>
                 <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center pt-8">
                   <AvatarCircle
                     avatarUrl={avatarUrl}
                     onClick={() => setIsAvatarEditorOpen(true)}
-                    previewName={displayName.trim() || "Your profile"}
+                    previewName={
+                      displayName.trim() || t("community.yourProfile")
+                    }
                     triggerRef={avatarTriggerRef}
                   />
                   <label
@@ -536,10 +543,10 @@ export function CommunityOnboardingFlow({
                     htmlFor="community-display-name"
                   >
                     <span className="mb-2 block pl-4 text-sm text-foreground">
-                      Your username
+                      {t("community.username")}
                     </span>
                     <Input
-                      aria-label="Community username"
+                      aria-label={t("community.usernameAria")}
                       autoCapitalize="none"
                       autoComplete="username"
                       autoCorrect="off"
@@ -548,7 +555,7 @@ export function CommunityOnboardingFlow({
                       disabled={isPending || isUploadingAvatar}
                       id="community-display-name"
                       onChange={(event) => setDisplayName(event.target.value)}
-                      placeholder="Enter your username here"
+                      placeholder={t("community.usernamePlaceholder")}
                       ref={nameInputRef}
                       spellCheck={false}
                       type="text"
@@ -578,7 +585,7 @@ export function CommunityOnboardingFlow({
                   onClick={() => void saveProfile()}
                   type="button"
                 >
-                  Next
+                  {t("common.next")}
                 </Button>
                 <Button
                   className="h-9 w-20 rounded-full bg-foreground/10 px-6 hover:bg-foreground/15"
@@ -588,7 +595,7 @@ export function CommunityOnboardingFlow({
                   type="button"
                   variant="ghost"
                 >
-                  Back
+                  {t("common.back")}
                 </Button>
               </OnboardingFooter>
               <Dialog
@@ -612,7 +619,7 @@ export function CommunityOnboardingFlow({
                   }
                 >
                   <DialogTitle className="sr-only">
-                    Edit your avatar
+                    {t("community.editAvatar")}
                   </DialogTitle>
                   <div ref={avatarEditorContentRef}>
                     <ProfileAvatarEditor
@@ -625,7 +632,9 @@ export function CommunityOnboardingFlow({
                       onUploadingChange={setIsUploadingAvatar}
                       onUrlChange={setAvatarUrl}
                       presentation="onboarding-modal"
-                      previewName={displayName.trim() || "Your profile"}
+                      previewName={
+                        displayName.trim() || t("community.yourProfile")
+                      }
                       testIdPrefix="community-avatar"
                     />
                   </div>
@@ -634,10 +643,11 @@ export function CommunityOnboardingFlow({
             </>
           ) : (
             <>
-              <h1 className="text-title font-normal">Meet your starter team</h1>
+              <h1 className="text-title font-normal">
+                {t("community.starterTeam")}
+              </h1>
               <p className="mx-auto mt-3 max-w-[400px] text-sm leading-6 text-foreground/80">
-                Buzz lets you bring multiple agents into the same workspace.
-                Your team will help you get started using Buzz.
+                {t("community.starterTeamDescription")}
               </p>
               <div className="flex w-full flex-1 items-center justify-center py-10">
                 {starterPersonas.length > 0 ? (
@@ -676,7 +686,9 @@ export function CommunityOnboardingFlow({
               {transaction.error ? (
                 <p className="text-sm text-destructive">
                   {transaction.error}
-                  {starterChannelFailureCount === 1 ? " Try again." : null}
+                  {starterChannelFailureCount === 1
+                    ? t("community.tryAgainSuffix")
+                    : null}
                 </p>
               ) : null}
               <OnboardingFooter>
@@ -691,11 +703,11 @@ export function CommunityOnboardingFlow({
                   }
                 >
                   {isPending || transaction.stage === "entering" ? (
-                    <LoadingDots label="Preparing Welcome" />
+                    <LoadingDots label={t("community.preparingWelcome")} />
                   ) : starterChannelFailureCount >= 2 ? (
-                    "Skip for now"
+                    t("onboarding.skipForNow")
                   ) : (
-                    "Take me to Buzz"
+                    t("community.enterBuzz")
                   )}
                 </Button>
                 <Button
@@ -705,7 +717,7 @@ export function CommunityOnboardingFlow({
                   onClick={backToProfile}
                   variant="ghost"
                 >
-                  Back
+                  {t("common.back")}
                 </Button>
               </OnboardingFooter>
             </>

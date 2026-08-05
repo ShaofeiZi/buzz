@@ -34,6 +34,8 @@ import { OnboardingFooterProvider } from "./OnboardingFooter";
 import { OnboardingSlideTransition } from "./OnboardingSlideTransition";
 import { SetupStep } from "./SetupStep";
 import type { DefaultConfigDraft } from "./types";
+import { useI18n } from "@/shared/i18n/I18nProvider";
+import { LanguageSelector } from "@/shared/i18n/LanguageSelector";
 
 export type MachineOnboardingPage =
   | "identity"
@@ -71,6 +73,7 @@ export function MachineOnboardingFlow({
    */
   navigateAfterComplete?: (nav: PostOnboardingNavigation) => void;
 }) {
+  const { t } = useI18n();
   const [page, setPage] = React.useState<MachineOnboardingPage>(
     identityLost ? "key-import" : (initialPage ?? "identity"),
   );
@@ -121,17 +124,17 @@ export function MachineOnboardingFlow({
       setPage("backup");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Failed to load identity",
+        cause instanceof Error
+          ? cause.message
+          : t("onboarding.loadIdentityFailed"),
       );
     } finally {
       setIsPending(false);
     }
-  }, [queryClient]);
+  }, [queryClient, t]);
 
   const replaceLostIdentity = React.useCallback(async () => {
-    const confirmed = window.confirm(
-      "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
-    );
+    const confirmed = window.confirm(t("onboarding.replaceIdentityConfirm"));
     if (!confirmed) return;
 
     setIsPending(true);
@@ -147,12 +150,14 @@ export function MachineOnboardingFlow({
       setPage("backup");
     } catch (cause) {
       setError(
-        cause instanceof Error ? cause.message : "Failed to save identity",
+        cause instanceof Error
+          ? cause.message
+          : t("onboarding.saveIdentityFailed"),
       );
     } finally {
       setIsPending(false);
     }
-  }, [queryClient]);
+  }, [queryClient, t]);
 
   const importExistingIdentity = React.useCallback(
     async (nsec: string, password?: string) => {
@@ -178,6 +183,9 @@ export function MachineOnboardingFlow({
       data-testid="machine-onboarding-gate"
     >
       <StartupWindowDragRegion />
+      <div className="fixed right-6 top-8 z-30">
+        <LanguageSelector compact />
+      </div>
       {page === "identity" ? <LandingBees /> : null}
       {isSecuritySubview ? (
         <div className="fixed inset-x-0 top-8 z-20 flex justify-center px-6">
@@ -193,7 +201,7 @@ export function MachineOnboardingFlow({
             variant="ghost"
           >
             <ArrowUp className="h-4 w-4" aria-hidden="true" />
-            Return to onboarding
+            {t("onboarding.return")}
           </Button>
         </div>
       ) : page !== "identity" ? (
@@ -219,9 +227,8 @@ export function MachineOnboardingFlow({
                 className="w-full max-w-[600px]"
                 src="/landing/buzz-wordmark.png"
               />
-              <p className="mt-2 max-w-[560px] text-center text-2xl font-normal leading-none text-foreground">
-                Your people, your agents, your projects —<br />
-                all in one place.
+              <p className="mt-2 max-w-[560px] whitespace-pre-line text-center text-2xl font-normal leading-none text-foreground">
+                {t("onboarding.tagline")}
               </p>
               {error ? (
                 <p className="mt-4 text-sm text-destructive">{error}</p>
@@ -234,10 +241,10 @@ export function MachineOnboardingFlow({
                   type="button"
                 >
                   {isPending
-                    ? "Loading identity…"
+                    ? t("onboarding.loadingIdentity")
                     : selectedPubkey
-                      ? "Continue setup"
-                      : "Create a new identity key"}
+                      ? t("onboarding.continueSetup")
+                      : t("onboarding.createIdentity")}
                 </Button>
                 <Button
                   className={`${ONBOARDING_SECONDARY_CTA_CLASS} px-5`}
@@ -250,8 +257,8 @@ export function MachineOnboardingFlow({
                   variant="ghost"
                 >
                   {selectedPubkey
-                    ? "Use a different key instead"
-                    : "Use an existing key"}
+                    ? t("onboarding.useDifferentKey")
+                    : t("onboarding.useExistingKey")}
                 </Button>
               </div>
               <IdentityKeyHelpDialog />
@@ -275,22 +282,26 @@ export function MachineOnboardingFlow({
               >
                 <h1 className="text-title font-normal text-foreground">
                   {keyImportStage === "backup-password"
-                    ? "Unlock your account"
+                    ? t("onboarding.unlockAccount")
                     : identityLost
-                      ? "Re-import your key"
-                      : "Enter your private key"}
+                      ? t("onboarding.reimportKey")
+                      : t("onboarding.enterPrivateKey")}
                 </h1>
                 <p className="mt-5 max-w-[440px] text-sm leading-6 text-foreground/80">
                   {keyImportStage === "backup-password"
-                    ? "Enter your backup password to unlock your key and restore your identity."
+                    ? t("onboarding.unlockDescription")
                     : identityLost
-                      ? "Your identity is no longer in the system keyring. Re-import your nsec to restore it."
-                      : "If you already have a Buzz account, enter your private key below to get started."}
+                      ? t("onboarding.reimportDescription")
+                      : t("onboarding.privateKeyDescription")}
                 </p>
               </motion.div>
               <div className="buzz-onboarding-key-import-position w-full">
                 <NostrKeyImportForm
-                  backLabel={identityLost ? "Start new identity" : "Back"}
+                  backLabel={
+                    identityLost
+                      ? t("onboarding.startNewIdentity")
+                      : t("common.back")
+                  }
                   onBack={
                     identityLost
                       ? () => void replaceLostIdentity()

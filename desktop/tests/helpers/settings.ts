@@ -8,6 +8,7 @@ type SettingsSection =
   | "channel-templates"
   | "compute"
   | "appearance"
+  | "language"
   | "shortcuts"
   | "hosted-communities"
   | "tokens"

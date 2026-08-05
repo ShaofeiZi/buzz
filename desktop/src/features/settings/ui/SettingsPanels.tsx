@@ -10,6 +10,7 @@ import {
   Download,
   FlaskConical,
   Keyboard,
+  Languages,
   LayoutTemplate,
   MessagesSquare,
   MonitorCog,
@@ -85,6 +86,9 @@ import { ProfileSettingsCard } from "./ProfileSettingsCard";
 import { UpdateChecker } from "../UpdateChecker";
 import { SettingsSectionHeader } from "./SettingsSectionHeader";
 import { VoiceSettingsCard } from "./VoiceSettingsCard";
+import { LanguageSettingsCard } from "./LanguageSettingsCard";
+import type { MessageKey } from "@/shared/i18n/messages/en";
+import { useI18n } from "@/shared/i18n/I18nProvider";
 
 export type SettingsSection =
   | "profile"
@@ -95,6 +99,7 @@ export type SettingsSection =
   | "channel-templates"
   | "compute"
   | "appearance"
+  | "language"
   | "shortcuts"
   | "hosted-communities"
   | "community-members"
@@ -115,6 +120,7 @@ const SETTINGS_SECTION_VALUES: readonly SettingsSection[] = [
   "channel-templates",
   "compute",
   "appearance",
+  "language",
   "shortcuts",
   "hosted-communities",
   "community-members",
@@ -134,7 +140,7 @@ export function isSettingsSection(value: unknown): value is SettingsSection {
 
 export type SettingsSectionDescriptor = {
   value: SettingsSection;
-  label: string;
+  labelKey: MessageKey;
   icon: LucideIcon;
   /** If set, this section is only visible when the feature is enabled */
   featureGate?: string;
@@ -158,85 +164,90 @@ export type SettingsPanelProps = {
 export const settingsSections: SettingsSectionDescriptor[] = [
   {
     value: "appearance",
-    label: "Appearance",
+    labelKey: "settings.appearance",
     icon: MonitorCog,
   },
   {
     value: "profile",
-    label: "Profile",
+    labelKey: "settings.profile",
     icon: UserRound,
   },
   {
     value: "notifications",
-    label: "Notifications",
+    labelKey: "settings.notifications",
     icon: BellRing,
   },
   {
     value: "voice",
-    label: "Voice",
+    labelKey: "settings.voice",
     icon: Volume2,
   },
   {
     value: "experimental",
-    label: "Experiments",
+    labelKey: "settings.experiments",
     icon: FlaskConical,
   },
   {
     value: "agents",
-    label: "Agents",
+    labelKey: "settings.agents",
     icon: Bot,
     featureGate: "managed-agents",
   },
   {
     value: "channel-templates",
-    label: "Channel templates",
+    labelKey: "settings.channelTemplates",
     icon: LayoutTemplate,
     featureGate: "channel-templates",
   },
   {
     value: "compute",
-    label: "Compute",
+    labelKey: "settings.compute",
     icon: Cpu,
   },
   {
+    value: "language",
+    labelKey: "language.label",
+    icon: Languages,
+  },
+  {
     value: "shortcuts",
-    label: "Shortcuts",
+    labelKey: "settings.shortcuts",
     icon: Keyboard,
   },
   {
     value: "hosted-communities",
-    label: "Hosted communities",
+    labelKey: "settings.hostedCommunities",
     icon: MessagesSquare,
   },
   {
     value: "community-members",
-    label: "Invites",
+    labelKey: "settings.invites",
     icon: Ticket,
   },
   {
     value: "moderation",
-    label: "Moderation",
+    labelKey: "settings.moderation",
     icon: ShieldAlert,
   },
   {
     value: "custom-emoji",
-    label: "Custom emoji",
+    labelKey: "settings.customEmoji",
     icon: Smile,
     featureGate: "custom-emoji",
   },
   {
     value: "local-archive",
-    label: "Local archive",
+    labelKey: "settings.localArchive",
     icon: Archive,
   },
   {
     value: "mobile",
-    label: "Mobile",
+    labelKey: "settings.mobile",
     icon: Smartphone,
   },
   {
     value: "updates",
-    label: "Updates",
+    labelKey: "settings.updates",
     icon: Download,
   },
 ];
@@ -418,6 +429,7 @@ const ACCENT_PICKER_TRANSITION = {
 };
 
 function ThemeSettingsCard() {
+  const { t } = useI18n();
   const {
     setTheme,
     selectedThemeName,
@@ -525,17 +537,29 @@ function ThemeSettingsCard() {
       data-testid="settings-theme"
     >
       <SettingsSectionHeader
-        title="Appearance"
-        description="Choose a theme for Buzz."
+        title={t("settings.appearance")}
+        description={t("appearance.description")}
       />
 
       {/* Mode selector: System / Light / Dark */}
       <div className="mb-4 flex gap-2">
         {(
           [
-            { mode: "system" as const, label: "System", Icon: SunMoon },
-            { mode: "light" as const, label: "Light", Icon: Sun },
-            { mode: "dark" as const, label: "Dark", Icon: Moon },
+            {
+              mode: "system" as const,
+              label: t("appearance.system"),
+              Icon: SunMoon,
+            },
+            {
+              mode: "light" as const,
+              label: t("appearance.light"),
+              Icon: Sun,
+            },
+            {
+              mode: "dark" as const,
+              label: t("appearance.dark"),
+              Icon: Moon,
+            },
           ] as const
         ).map(({ mode, label, Icon }) => (
           <button
@@ -834,6 +858,8 @@ export function renderSettingsSection(
       return <MeshComputeSettingsCard />;
     case "appearance":
       return <ThemeSettingsCard />;
+    case "language":
+      return <LanguageSettingsCard />;
     case "shortcuts":
       return <KeyboardShortcutsCard />;
     case "hosted-communities":

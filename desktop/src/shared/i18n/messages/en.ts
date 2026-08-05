@@ -1,0 +1,190 @@
+/** Canonical English messages and the source of truth for translation keys. */
+export const enMessages = {
+  "common.back": "Back",
+  "common.cancel": "Cancel",
+  "common.continue": "Continue",
+  "common.copy": "Copy",
+  "common.copied": "Copied",
+  "common.loading": "Loading…",
+  "common.next": "Next",
+  "common.optional": "optional",
+  "common.remove": "Remove",
+  "common.retry": "Try again",
+  "common.settings": "Settings",
+
+  "language.description":
+    "Choose the language used by Buzz. Changes apply immediately.",
+  "language.english": "English",
+  "language.label": "Language",
+  "language.simplifiedChinese": "简体中文",
+  "language.system": "Follow system",
+  "language.systemResolved": "Currently using {{language}}",
+
+  "onboarding.tagline":
+    "Your people, your agents, your projects —\nall in one place.",
+  "onboarding.loadingIdentity": "Loading identity…",
+  "onboarding.continueSetup": "Continue setup",
+  "onboarding.createIdentity": "Create a new identity key",
+  "onboarding.useDifferentKey": "Use a different key instead",
+  "onboarding.useExistingKey": "Use an existing key",
+  "onboarding.unlockAccount": "Unlock your account",
+  "onboarding.reimportKey": "Re-import your key",
+  "onboarding.enterPrivateKey": "Enter your private key",
+  "onboarding.unlockDescription":
+    "Enter your backup password to unlock your key and restore your identity.",
+  "onboarding.reimportDescription":
+    "Your identity is no longer in the system keyring. Re-import your nsec to restore it.",
+  "onboarding.privateKeyDescription":
+    "If you already have a Buzz account, enter your private key below to get started.",
+  "onboarding.startNewIdentity": "Start new identity",
+  "onboarding.return": "Return to onboarding",
+  "onboarding.loadIdentityFailed": "Failed to load identity",
+  "onboarding.saveIdentityFailed": "Failed to save identity",
+  "onboarding.replaceIdentityConfirm":
+    "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
+  "onboarding.setupHarnesses": "Set up your agent harnesses",
+  "onboarding.setupHarnessesDescription":
+    "Buzz checks for command-line harnesses on this machine. Install the CLI or sign in to at least one to continue.",
+  "onboarding.noHarnesses":
+    "No supported command-line harnesses were detected yet. Install a supported CLI, then check again.",
+  "onboarding.skipForNow": "Skip for now",
+  "onboarding.moreHarnessesPrefix":
+    "More harnesses (Cursor, Grok, Amp…) can be configured in",
+  "onboarding.moreHarnessesSuffix": "after setup.",
+  "onboarding.configureDefaults": "Configure your default model settings",
+  "onboarding.configureDefaultsDescription":
+    "This will be set as your default model configuration across Buzz. You can change it later.",
+  "onboarding.saving": "Saving…",
+  "onboarding.saveModelFailed": "Couldn’t save model settings.",
+  "onboarding.configureModelsLater":
+    "Configure default models in {{settings}} after setup.",
+
+  "keyImport.title": "Use your existing key",
+  "keyImport.description":
+    "Import your Nostr private key to use that identity with Buzz. If this key already has a profile on the relay, your name and avatar are restored automatically.",
+  "keyImport.placeholder": "Enter your key here",
+  "keyImport.defaultPlaceholder": "nsec1...",
+  "keyImport.invalid":
+    "That doesn't look like a valid nsec. Paste an nsec1 key.",
+  "keyImport.incompleteEncrypted":
+    "That doesn't look like a complete encrypted key backup.",
+  "keyImport.passwordRequired": "Enter the password for this key backup.",
+  "keyImport.waitingEncrypted": "Waiting for a complete encrypted key backup",
+  "keyImport.waitingNsec": "Waiting for a valid nsec1 key",
+  "keyImport.importing": "Importing key",
+  "keyImport.importFailed": "Couldn't import this key.",
+  "keyImport.continue": "Continue with this key",
+  "keyImport.reveal": "Reveal private key",
+  "keyImport.hide": "Hide private key",
+  "keyImport.privateKey": "Private key",
+  "keyImport.identityPreview": "This will use this Nostr identity:",
+
+  "profile.callYou": "What should we call you?",
+  "profile.callYouDescription":
+    "Pick the name people and agents will see in Buzz. You can change it anytime.",
+  "profile.name": "Name",
+  "profile.enterName": "Enter your name",
+  "profile.saving": "Saving profile",
+  "profile.createIdentity": "Create an identity key",
+  "profile.existingKey": "I already have a key",
+  "profile.continueWithoutSaving": "Continue without saving",
+
+  "community.setupTitle": "Join or create a community",
+  "community.setupDescription":
+    "Join with an invite, create your own community, or reconnect one you already have.",
+  "community.join": "Join a community",
+  "community.create": "Create a community",
+  "community.alreadyHave": "I already have a community",
+  "community.reconnectTitle": "Reconnect to your community",
+  "community.reconnectRole":
+    "Tell us your role so we can find the fastest way back in.",
+  "community.owner": "I own the community",
+  "community.memberOrAdmin": "I’m a member or admin",
+  "community.joinDescription":
+    "Enter the invite link or community URL you received.",
+  "community.reconnectDescription":
+    "Enter the community URL or an invite link. Your role will be restored when you connect.",
+  "community.inputPlaceholder": "Invite link or community URL",
+  "community.privateTitle": "Joining a private community?",
+  "community.privateDescription":
+    "Some communities need the owner to add you before you can join. Copy your public ID and send it to the community owner.",
+  "community.copyPublicId": "Copy public ID",
+  "community.publicKeyLoadFailed": "Could not load your public key.",
+  "community.joining": "Joining {{community}}",
+  "community.acceptingInvite": "Accepting your invite…",
+  "community.connectingSecurely": "Connecting securely…",
+  "community.buildProfile": "Build your profile",
+  "community.buildProfileDescription":
+    "Add a name and avatar. They’ll show up on your messages, reactions, and agent handoffs.",
+  "community.yourProfile": "Your profile",
+  "community.username": "Your username",
+  "community.usernameAria": "Community username",
+  "community.usernamePlaceholder": "Enter your username here",
+  "community.editAvatar": "Edit your avatar",
+  "community.starterTeam": "Meet your starter team",
+  "community.starterTeamDescription":
+    "Buzz lets you bring multiple agents into the same workspace. Your team will help you get started using Buzz.",
+  "community.tryAgainSuffix": " Try again.",
+  "community.preparingWelcome": "Preparing Welcome",
+  "community.enterBuzz": "Take me to Buzz",
+
+  "invite.invalid": "Please enter a valid invite link or community URL",
+  "invite.linkOrCode": "Invite link or code",
+  "invite.communityUrlOrLink": "Community URL or invite link",
+  "invite.relayUrl": "Relay URL",
+  "invite.apiToken": "API token",
+  "invite.useApiToken": "Use an API token",
+  "invite.redeeming": "Redeeming invite",
+  "invite.loadingPolicy": "Loading policy",
+  "invite.acceptAndJoin": "Accept and join",
+  "invite.joinCommunity": "Join community",
+  "invite.acceptAndRedeem": "Accept and redeem invite",
+  "invite.redeem": "Redeem invite",
+  "invite.confirmAge": "Confirm that you are at least 18 years old.",
+  "invite.agreePolicies": "Agree to the Terms of Service and Privacy Policy.",
+
+  "settings.backToApp": "Back to app",
+  "settings.personal": "Personal",
+  "settings.communities": "Communities",
+  "settings.app": "App",
+  "settings.checkingInvites": "Checking invite permissions…",
+  "settings.invitesUnavailable": "Invite settings could not be checked.",
+  "settings.invitesRecovering":
+    "Invite settings are unavailable. Relay recovery may still be in progress.",
+  "settings.groupAria": "{{group}} settings sections",
+  "settings.appearance": "Appearance",
+  "settings.profile": "Profile",
+  "settings.notifications": "Notifications",
+  "settings.voice": "Voice",
+  "settings.experiments": "Experiments",
+  "settings.agents": "Agents",
+  "settings.channelTemplates": "Channel templates",
+  "settings.compute": "Compute",
+  "settings.shortcuts": "Shortcuts",
+  "settings.hostedCommunities": "Hosted communities",
+  "settings.invites": "Invites",
+  "settings.moderation": "Moderation",
+  "settings.customEmoji": "Custom emoji",
+  "settings.localArchive": "Local archive",
+  "settings.mobile": "Mobile",
+  "settings.updates": "Updates",
+  "appearance.description": "Choose a theme for Buzz.",
+  "appearance.system": "System",
+  "appearance.light": "Light",
+  "appearance.dark": "Dark",
+
+  "sidebar.inbox": "Inbox",
+  "sidebar.pulse": "Pulse",
+  "sidebar.projects": "Projects",
+  "sidebar.agents": "Agents",
+  "sidebar.workflows": "Workflows",
+  "sidebar.channels": "Channels",
+  "sidebar.browseChannels": "Browse channels",
+  "sidebar.forums": "Forums",
+  "sidebar.newForum": "New forum",
+  "sidebar.directMessages": "Direct messages",
+  "sidebar.newMessage": "New message",
+} as const;
+
+/** A compile-time-safe key accepted by the desktop translator. */
+export type MessageKey = keyof typeof enMessages;
