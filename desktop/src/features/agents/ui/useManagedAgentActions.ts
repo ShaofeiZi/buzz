@@ -21,6 +21,7 @@ import type {
   CreateManagedAgentResponse,
   ManagedAgent,
 } from "@/shared/api/types";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { removeChannelMember } from "@/shared/api/tauri";
 import { normalizePubkey } from "@/shared/lib/pubkey";
 import {
@@ -353,7 +354,9 @@ export function useManagedAgentActions() {
   ): Promise<boolean> {
     if (targets.length === 0) return false;
     const confirmed = window.confirm(
-      `${confirmLabel} ${targets.length} agent${targets.length === 1 ? "" : "s"}?`,
+      translateCurrentUserVisibleText(
+        `${confirmLabel} ${targets.length} agent${targets.length === 1 ? "" : "s"}?`,
+      ),
     );
     if (!confirmed) return false;
     clearFeedback();

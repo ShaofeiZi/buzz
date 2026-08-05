@@ -67,6 +67,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "resources": {
+      "resources/zh-Hans.lproj/InfoPlist.strings": "zh-Hans.lproj/InfoPlist.strings"
+    },
     "macOS": {
       "infoPlist": "Info.plist",
       "entitlements": "Entitlements.plist",

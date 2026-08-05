@@ -24,6 +24,8 @@
 //! IPC hop this approach does not need.
 
 #[cfg(target_os = "macos")]
+use crate::native_i18n::text;
+#[cfg(target_os = "macos")]
 use tauri::menu::{
     AboutMetadata, Menu, PredefinedMenuItem, Submenu, HELP_SUBMENU_ID, WINDOW_SUBMENU_ID,
 };
@@ -38,6 +40,15 @@ pub fn install<R: Runtime>(builder: Builder<R>) -> Builder<R> {
     #[cfg(target_os = "macos")]
     let builder = builder.menu(build);
     builder
+}
+
+pub fn refresh<R: Runtime>(app: &AppHandle<R>) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    app.set_menu(build(app).map_err(|error| error.to_string())?)
+        .map(|_| ())
+        .map_err(|error| error.to_string())?;
+
+    Ok(())
 }
 
 /// Mirrors `Menu::default()` with every `close_window` item omitted.
@@ -66,50 +77,60 @@ pub fn build<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
                 pkg_info.name.clone(),
                 true,
                 &[
-                    &PredefinedMenuItem::about(app, None, Some(about_metadata))?,
+                    &PredefinedMenuItem::about(
+                        app,
+                        Some(text("About Buzz", "关于 Buzz")),
+                        Some(about_metadata),
+                    )?,
                     &PredefinedMenuItem::separator(app)?,
-                    &PredefinedMenuItem::services(app, None)?,
+                    &PredefinedMenuItem::services(app, Some(text("Services", "服务")))?,
                     &PredefinedMenuItem::separator(app)?,
-                    &PredefinedMenuItem::hide(app, None)?,
-                    &PredefinedMenuItem::hide_others(app, None)?,
+                    &PredefinedMenuItem::hide(app, Some(text("Hide Buzz", "隐藏 Buzz")))?,
+                    &PredefinedMenuItem::hide_others(
+                        app,
+                        Some(text("Hide Others", "隐藏其他应用")),
+                    )?,
                     &PredefinedMenuItem::separator(app)?,
-                    &PredefinedMenuItem::quit(app, None)?,
+                    &PredefinedMenuItem::quit(app, Some(text("Quit Buzz", "退出 Buzz")))?,
                 ],
             )?,
             // `Menu::default()`'s File submenu holds exactly one item on macOS
             // -- close_window -- so dropping that item drops the submenu too.
             &Submenu::with_items(
                 app,
-                "Edit",
+                text("Edit", "编辑"),
                 true,
                 &[
-                    &PredefinedMenuItem::undo(app, None)?,
-                    &PredefinedMenuItem::redo(app, None)?,
+                    &PredefinedMenuItem::undo(app, Some(text("Undo", "撤销")))?,
+                    &PredefinedMenuItem::redo(app, Some(text("Redo", "重做")))?,
                     &PredefinedMenuItem::separator(app)?,
-                    &PredefinedMenuItem::cut(app, None)?,
-                    &PredefinedMenuItem::copy(app, None)?,
-                    &PredefinedMenuItem::paste(app, None)?,
-                    &PredefinedMenuItem::select_all(app, None)?,
+                    &PredefinedMenuItem::cut(app, Some(text("Cut", "剪切")))?,
+                    &PredefinedMenuItem::copy(app, Some(text("Copy", "复制")))?,
+                    &PredefinedMenuItem::paste(app, Some(text("Paste", "粘贴")))?,
+                    &PredefinedMenuItem::select_all(app, Some(text("Select All", "全选")))?,
                 ],
             )?,
             &Submenu::with_items(
                 app,
-                "View",
+                text("View", "显示"),
                 true,
-                &[&PredefinedMenuItem::fullscreen(app, None)?],
+                &[&PredefinedMenuItem::fullscreen(
+                    app,
+                    Some(text("Enter Full Screen", "进入全屏幕")),
+                )?],
             )?,
             &Submenu::with_id_and_items(
                 app,
                 WINDOW_SUBMENU_ID,
-                "Window",
+                text("Window", "窗口"),
                 true,
                 &[
-                    &PredefinedMenuItem::minimize(app, None)?,
-                    &PredefinedMenuItem::maximize(app, None)?,
+                    &PredefinedMenuItem::minimize(app, Some(text("Minimize", "最小化")))?,
+                    &PredefinedMenuItem::maximize(app, Some(text("Zoom", "缩放")))?,
                 ],
             )?,
             // Empty upstream too on macOS: About lives in the app submenu.
-            &Submenu::with_id_and_items(app, HELP_SUBMENU_ID, "Help", true, &[])?,
+            &Submenu::with_id_and_items(app, HELP_SUBMENU_ID, text("Help", "帮助"), true, &[])?,
         ],
     )
 }

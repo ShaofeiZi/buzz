@@ -10,9 +10,9 @@ import {
   useManagedAgentsQuery,
   useRelayAgentsQuery,
 } from "@/features/agents/hooks";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { normalizePubkey, truncatePubkey } from "@/shared/lib/pubkey";
 import { useNow } from "@/shared/lib/useNow";
-import { formatElapsed } from "@/features/agents/ui/agentSessionUtils";
 import type { Channel } from "@/shared/api/types";
 
 type TrayAgentActivity = {
@@ -20,7 +20,7 @@ type TrayAgentActivity = {
   agentName: string;
   channelId: string;
   channelName: string;
-  elapsed: string;
+  elapsedMs: number;
 };
 
 type TrayAction =
@@ -72,11 +72,13 @@ export function useTrayMenu({
           activityId: `${channelTurn.channelId}:${normalizePubkey(pubkey)}`,
           agentName:
             agentNames.get(normalizePubkey(pubkey)) ??
-            `Agent ${truncatePubkey(pubkey)}`,
+            translateCurrentUserVisibleText(`Agent ${truncatePubkey(pubkey)}`),
           channelId: channelTurn.channelId,
           channelName:
-            channelNames.get(channelTurn.channelId) ?? "Unknown channel",
-          elapsed: formatElapsed(
+            channelNames.get(channelTurn.channelId) ??
+            translateCurrentUserVisibleText("Unknown channel"),
+          elapsedMs: Math.max(
+            0,
             now - (agentTurn?.anchorAt ?? channelTurn.anchorAt),
           ),
         };

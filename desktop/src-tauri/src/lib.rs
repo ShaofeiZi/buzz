@@ -23,6 +23,7 @@ mod migration;
 #[cfg(test)]
 mod model_tests;
 mod models;
+mod native_i18n;
 mod native_websocket;
 mod nostr_bind;
 pub mod nostr_convert;
@@ -74,12 +75,8 @@ use mesh_llm_stubs::*;
 use shutdown::{hard_exit_after_mesh_shutdown, relaunch_after_mesh_shutdown};
 use shutdown::{is_restart_request, shut_down_app};
 use std::sync::{atomic::AtomicBool, atomic::Ordering, Arc};
-#[cfg(target_os = "macos")]
-use tauri::Listener;
 use tauri::{Emitter, Manager, RunEvent, WindowEvent};
 use tauri_plugin_window_state::StateFlags;
-#[cfg(target_os = "macos")]
-use tray_menu::show_main_window;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -112,10 +109,8 @@ pub fn run() {
     }
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, _cwd| {
-            // Focus the existing window when a duplicate instance launches.
-            if let Some(w) = app.get_webview_window("main") {
-                let _ = w.set_focus();
-            }
+            // Restore the existing window when a duplicate instance launches.
+            show_main_window(app);
             // Forward any deep link URLs from the duplicate launch.
             for arg in &argv {
                 if arg.starts_with("buzz://") {
@@ -145,45 +140,9 @@ pub fn run() {
                     // on macOS/Windows.
                     linux_media::enable_media_capture(&webview);
 
-                    // macOS applies the restored geometry asynchronously. Wait
-                    // for several identical outer bounds and for React to
-                    // commit the startup surface before revealing it.
-                    let window = webview.window();
-
-                    #[cfg(target_os = "macos")]
-                    {
-                        set_initial_window_backing(&window);
-
-                        let (initial_render_tx, initial_render_rx) = tokio::sync::oneshot::channel();
-                        window
-                            .app_handle()
-                            .once(INITIAL_RENDER_READY_EVENT, move |_| {
-                                let _ = initial_render_tx.send(());
-                            });
-
-                        tauri::async_runtime::spawn(async move {
-                            wait_for_stable_initial_window_geometry(&window).await;
-
-                            if tokio::time::timeout(
-                                std::time::Duration::from_secs(5),
-                                initial_render_rx,
-                            )
-                            .await
-                            .is_err()
-                            {
-                                eprintln!(
-                                    "buzz-desktop: initial render did not commit before reveal timeout"
-                                );
-                            }
-
-                            reveal_initial_window(&window);
-                            clear_initial_window_backing(&window).await;
-                        });
-                    }
-
                     #[cfg(not(target_os = "macos"))]
                     {
-                        reveal_initial_window(&window);
+                        reveal_initial_window(&webview.window());
                     }
                 })
                 .build(),
@@ -308,6 +267,8 @@ pub fn run() {
         .manage(terminal_runtime::TerminalSessions::default())
         .setup(move |app| {
             let app_handle = app.handle().clone();
+            #[cfg(target_os = "macos")]
+            schedule_initial_window_reveal(&app_handle);
             #[cfg(target_os = "macos")]
             tray_menu::init(&app_handle)?;
 
@@ -600,6 +561,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            native_i18n::set_app_locale,
             terminal_runtime::terminal_attach,
             terminal_runtime::terminal_detach,
             terminal_runtime::terminal_close,

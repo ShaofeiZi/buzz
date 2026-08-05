@@ -58,7 +58,10 @@ export function ChannelIntroBlock({
         .
       </p>
       {intro.description ? (
-        <p className="mt-2 max-w-xl text-sm leading-5 text-muted-foreground">
+        <p
+          className="mt-2 max-w-xl text-sm leading-5 text-muted-foreground"
+          data-user-content=""
+        >
           {intro.description}
         </p>
       ) : null}

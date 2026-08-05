@@ -18,6 +18,7 @@ import { Toaster } from "@/shared/ui/sonner";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { recoverLocalStorageQuotaOnStartup } from "@/shared/lib/localStorageQuota";
 import { I18nProvider } from "@/shared/i18n/I18nProvider";
+import { DomLocalization } from "@/shared/i18n/DomLocalization";
 
 type E2eWindow = Window & {
   __BUZZ_E2E__?: unknown;
@@ -78,6 +79,7 @@ function renderApp() {
   ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
       <I18nProvider>
+        <DomLocalization />
         <CommunitiesProvider>
           <CommunityOnboardingProvider
             enabled={huddleWindowChannelId() === null}

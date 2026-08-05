@@ -8,6 +8,7 @@ import {
 import { relayClient } from "@/shared/api/relayClient";
 import { getMyRelayMembershipLookup } from "@/shared/api/relayMembers";
 import { isRelayUnreachableError } from "@/shared/lib/relayError";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import {
   getIdentity,
   importIdentity,
@@ -407,7 +408,9 @@ export function OnboardingFlow({
   // RelaunchRequiredScreen. No navigation needed here.
   const handleLostModeBack = React.useCallback(async () => {
     const confirmed = window.confirm(
-      "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
+      translateCurrentUserVisibleText(
+        "This will create a new identity and abandon your previous key. This cannot be undone. Continue?",
+      ),
     );
     if (!confirmed) {
       return;

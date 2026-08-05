@@ -7,6 +7,7 @@ import {
   requestPermission,
 } from "@tauri-apps/plugin-notification";
 import { isLinuxPlatform, isMacPlatform } from "@/shared/lib/platform";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 
 // Backend event emitted when the user clicks a native (Linux) notification.
 // See src-tauri/src/commands/notifications.rs.
@@ -292,6 +293,7 @@ export async function sendDesktopNotification(
   if ((await getDesktopNotificationPermissionState()) !== "granted") {
     return false;
   }
+  const localizedTitle = translateCurrentUserVisibleText(payload.title);
 
   // On Linux the bundled notification plugin posts via a D-Bus connection that
   // it drops immediately; GNOME 46+ then dismisses the notification before it
@@ -300,7 +302,7 @@ export async function sendDesktopNotification(
   if (isTauri() && isLinuxPlatform()) {
     try {
       await invoke("show_native_notification", {
-        title: payload.title,
+        title: localizedTitle,
         body: payload.body,
         target: payload.target ?? null,
       });
@@ -310,7 +312,7 @@ export async function sendDesktopNotification(
     }
   }
 
-  const notification = new window.Notification(payload.title, {
+  const notification = new window.Notification(localizedTitle, {
     body: payload.body,
     silent: true,
     extra: notificationExtra(payload.target),

@@ -17,6 +17,7 @@ import {
   resolveNotificationChannelLabel,
   truncateNotificationBody,
 } from "@/features/notifications/lib/notificationFormat";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import {
   playNotificationSound,
   resolveSlotSound,
@@ -103,7 +104,7 @@ export function useReminderNotifications(
             due[0].content.target?.preview ?? due[0].content.note ?? "",
             "A reminder is waiting",
           )
-        : `${due.length} reminders are due`;
+        : translateCurrentUserVisibleText(`${due.length} reminders are due`);
 
     void sendDesktopNotification({
       title: formatNotificationTitle({ prefix: "Reminder due", channelLabel }),

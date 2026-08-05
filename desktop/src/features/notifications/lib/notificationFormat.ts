@@ -1,3 +1,8 @@
+import {
+  getCurrentLiteralLocale,
+  translateCurrentUserVisibleText,
+} from "@/shared/i18n/literalTranslation";
+
 const NOTIFICATION_BODY_MAX_LENGTH = 140;
 
 /**
@@ -28,7 +33,9 @@ export function truncateNotificationBody(
   fallback: string,
 ): string {
   const trimmed = content.trim();
-  if (trimmed.length === 0) return fallback;
+  if (trimmed.length === 0) {
+    return translateCurrentUserVisibleText(fallback);
+  }
   if (trimmed.length <= NOTIFICATION_BODY_MAX_LENGTH) return trimmed;
   return `${trimmed.slice(0, NOTIFICATION_BODY_MAX_LENGTH - 3).trimEnd()}...`;
 }
@@ -43,7 +50,9 @@ export function formatNotificationTitle(opts: {
   prefix: string;
   channelLabel: string | null;
 }): string {
-  return opts.channelLabel
-    ? `${opts.prefix} in ${opts.channelLabel}`
-    : opts.prefix;
+  const prefix = translateCurrentUserVisibleText(opts.prefix);
+  if (!opts.channelLabel) return prefix;
+  return getCurrentLiteralLocale() === "zh-CN"
+    ? `${prefix} · ${opts.channelLabel}`
+    : `${prefix} in ${opts.channelLabel}`;
 }

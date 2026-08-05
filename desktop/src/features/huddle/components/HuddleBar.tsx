@@ -20,6 +20,7 @@ import { relayClient } from "@/shared/api/relayClient";
 import { signRelayEvent } from "@/shared/api/tauri";
 import type { RelayEvent } from "@/shared/api/types";
 import { KIND_HUDDLE_REACTION } from "@/shared/constants/kinds";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { cn } from "@/shared/lib/cn";
 import { rewriteRelayUrl } from "@/shared/lib/mediaUrl";
 import { Button } from "@/shared/ui/button";
@@ -698,7 +699,9 @@ export function HuddleBar({
               }}
               onRemoveAgent={async (pubkey) => {
                 const confirmed = window.confirm(
-                  "Remove this agent from the huddle?",
+                  translateCurrentUserVisibleText(
+                    "Remove this agent from the huddle?",
+                  ),
                 );
                 if (!confirmed) return;
                 try {

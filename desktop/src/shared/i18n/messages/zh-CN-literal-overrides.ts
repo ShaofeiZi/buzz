@@ -1,0 +1,266 @@
+/** Human-reviewed terminology and high-frequency desktop copy overrides. */
+export const zhCNLiteralOverrides: Readonly<Record<string, string>> = {
+  "Account uses": "账户用量",
+  Active: "活跃",
+  "Add anything that helps moderators...": "补充任何有助于管理员处理的信息…",
+  "Activity feed with notes, social posts, and agent activity":
+    "包含笔记、社交帖子和智能体活动的动态",
+  "Agent-managed profiles": "智能体自主管理个人资料",
+  "Agent info": "智能体信息",
+  "Agent: job accepted": "智能体：已接受任务",
+  "Agent: job error": "智能体：任务失败",
+  "Agent: job result": "智能体：任务完成",
+  "Agent: progress update": "智能体：任务进度更新",
+  "Agent + core memory": "智能体 + 核心记忆",
+  "Agent defaults": "智能体默认设置",
+  "Agent {{value}}": "智能体 {{value}}",
+  "Agent type": "智能体类型",
+  "API Token": "API 令牌",
+  "Archive my agents' observer frames": "归档我的智能体观察记录",
+  "Archive my agents' turn metrics": "归档我的智能体回合指标",
+  "Avatar type": "头像类型",
+  "Avatar upload pending": "头像等待上传",
+  "Backups use the standard NIP-49 format, so this works for backups from compatible Nostr apps too.":
+    "备份采用标准 NIP-49 格式，也兼容其他支持该格式的 Nostr 应用。",
+  "Backend note: `send_dm` is not executed yet, so runs fail at this step.":
+    "后端说明：`send_dm` 尚未执行，因此流程会在此步骤失败。",
+  "Backend note: `set_channel_topic` is not executed yet, so runs fail at this step.":
+    "后端说明：`set_channel_topic` 尚未执行，因此流程会在此步骤失败。",
+  "Build this agent's memory": "建立此智能体的记忆",
+  "Buzz couldn't access the clipboard. Try again.":
+    "Buzz 无法访问剪贴板，请重试。",
+  "Buzz shared compute": "Buzz 共享计算资源",
+  "Buzz relay op": "Buzz Relay 操作",
+  "Can't reach the relay — check your VPN or network connection.":
+    "无法连接 Relay，请检查 VPN 或网络连接。",
+  "Checking conversation members. Try again in a moment.":
+    "正在检查会话成员，请稍后重试。",
+  "Close panel": "关闭面板",
+  "Connection lost — relay is not responding": "连接中断，Relay 未响应",
+  "Connecting…": "正在连接…",
+  "Context Limit": "上下文上限",
+  "Context limit": "上下文上限",
+  "Community access denied this agent — check its community membership.":
+    "社区拒绝了此智能体的访问，请检查其社区成员身份。",
+  "Connect the Buzz mobile app to this relay by scanning a QR code. The connection is secured with end-to-end encryption and a verification code.":
+    "扫描二维码，将 Buzz 移动端连接到此 Relay。连接采用端到端加密，并通过验证码确认。",
+  "Copy {{value}}": "复制 {{value}}",
+  "Copy channel name: {{value}}": "复制频道名称：{{value}}",
+  "Copied {{value}}": "已复制 {{value}}",
+  "Channel name copied": "频道名称已复制",
+  "Could not add mentioned agent to the Huddle: {{value}}":
+    "无法将提及的智能体加入语音会议：{{value}}",
+  "Could not load this project item.": "无法加载此项目条目。",
+  "Create project item": "创建项目条目",
+  "Create Copy": "创建副本",
+  "Current ({{value}})": "当前（{{value}}）",
+  "DM with {{value}}": "与 {{value}} 的私信",
+  "Direct message": "私信",
+  Delay: "延迟",
+  Deleted: "已删除",
+  "Diff Posted": "已发布差异",
+  "Disconnected from relay": "已断开 Relay 连接",
+  "Expected ws:// or wss:// relay URL, got: {{value}}":
+    "应为 ws:// 或 wss:// Relay URL，实际收到：{{value}}",
+  "Follow system": "跟随系统",
+  "Failed to copy channel name": "复制频道名称失败",
+  "File edit": "编辑文件",
+  "File read": "读取文件",
+  "Fits well": "合适",
+  "Forum Channels": "论坛频道",
+  "Forum-style threaded channels for long-form discussions":
+    "适合长篇讨论的论坛式话题频道",
+  Formatting: "格式设置",
+  "Full-size attachment preview. Press Escape or click outside to close.":
+    "全尺寸附件预览。按 Escape 或点击外部区域关闭。",
+  "GitHub clone URL must use public https://github.com/owner/repository":
+    "GitHub 克隆地址必须使用公开的 https://github.com/owner/repository 格式",
+  "Git repository browser and collaboration": "浏览 Git 仓库并开展协作",
+  "Global defaults not set": "尚未设置全局默认值",
+  "Huddle audio isn’t available on this server. Ask an administrator to turn it on.":
+    "此服务器未启用语音会议音频，请联系管理员开启。",
+  "Huddle settings": "语音会议设置",
+  "Includes capture time, app version, platform, user agent, and language. No application log lines are collected.":
+    "包含捕获时间、应用版本、平台、浏览器标识和语言，不会收集应用日志内容。",
+  "Internal error": "内部错误",
+  "Let agents manage their own relay name and avatar instead of restoring the desktop copy":
+    "允许智能体自行管理 Relay 名称和头像，不再恢复桌面端保存的副本",
+  "Live activity will appear here.": "实时活动将显示在此处。",
+  "Loading project item…": "正在加载项目条目…",
+  "Manage agent access": "管理智能体使用权限",
+  "Max Output Tokens": "最大输出 Token 数",
+  "Max output tokens": "最大输出 Token 数",
+  "Max rounds": "最大轮数",
+  "Maximum context window tokens tracked before a handoff. Leave blank to inherit.":
+    "交接前最多保留的上下文窗口 Token 数。留空则继承默认设置。",
+  "Maximum LLM + tool-call rounds per turn. 0 = unlimited. Leave blank to inherit.":
+    "每回合最多执行的 LLM 与工具调用轮数。设为 0 表示不限制，留空则继承默认设置。",
+  "Maximum tokens the LLM may generate per response. Leave blank to inherit.":
+    "LLM 每次响应最多生成的 Token 数。留空则继承默认设置。",
+  "Message Posted": "已发布消息",
+  Mode: "模式",
+  Modified: "已修改",
+  "Mark unread": "标记为未读",
+  "Mention someone": "提及成员",
+  "Message {{value}}": "给 {{value}} 发消息",
+  "Message #{{value}}": "给 #{{value}} 发消息",
+  "No recent activity yet.": "暂无最近活动。",
+  "No agent updates found": "暂无智能体动态",
+  "No mentions found": "暂无提及",
+  "No project work found": "暂无项目动态",
+  "No threads found": "暂无话题",
+  "No unread activity": "暂无未读动态",
+  "No unread agent updates": "暂无未读智能体动态",
+  "No unread drafts": "暂无未读草稿",
+  "No unread items needing action": "暂无待处理的未读事项",
+  "No unread mentions": "暂无未读提及",
+  "No unread project work": "暂无未读项目动态",
+  "No unread reminders": "暂无未读提醒",
+  "No unread threads": "暂无未读话题",
+  "Needs Action": "需要处理",
+  "Not connected": "未连接",
+  "Nothing needs action": "暂无待处理事项",
+  Online: "在线",
+  Away: "离开",
+  Offline: "离线",
+  "Open {{value}}": "打开 {{value}}",
+  "OpenAI ingress is live; {{value}}": "OpenAI 接入服务已就绪；{{value}}",
+  "Open activity feed. Last live {{value}}.":
+    "打开活动动态。最近活跃：{{value}}。",
+  "Open profile for {{value}}": "打开 {{value}} 的个人资料",
+  "Open profile menu for {{value}}": "打开 {{value}} 的个人资料菜单",
+  Permission: "权限",
+  Plan: "计划",
+  Pulse: "Pulse",
+  "Preview response copied.": "已复制预览响应。",
+  "Approval Requested": "收到审批请求",
+  "Pocket TTS voice": "Pocket TTS 语音",
+  "Ran command": "已运行命令",
+  "Ran tool": "已运行工具",
+  "Ran {{value}} tool calls": "已运行 {{value}} 次工具调用",
+  "Raw event": "原始事件",
+  React: "添加回应",
+  "Reaction Added": "已添加回应",
+  "Reconnecting to relay…": "正在重新连接 Relay…",
+  Renamed: "已重命名",
+  "React with {{value}}": "使用 {{value}} 回应",
+  "Remove {{value}}": "移除 {{value}}",
+  "Remove {{value}} from huddle": "将 {{value}} 移出语音会议",
+  "Remove this agent from the huddle?": "将此智能体移出语音会议？",
+  "Request OS permission and surface new mentions or needs-action items outside the app.":
+    "请求系统通知权限，在应用外显示新的提及和待处理事项。",
+  "Save the private key now. The app can keep running the harness locally, but this secret is only revealed here.":
+    "请立即保存私钥。应用可继续在本地运行此运行环境，但该私钥只会在此处显示一次。",
+  "Saved. Restarted {{value}} agent{{value}}.{{value}}":
+    "已保存。已重新启动 {{value}} 个智能体{{value}}。{{value}}",
+  "Saved. {{value}} agent{{value}} couldn't restart — check the Agents page.":
+    "已保存。{{value}} 个智能体{{value}}无法重启，请前往“智能体”页面检查。",
+  "Search everything": "搜索全部内容",
+  Schedule: "定时触发",
+  "Send DM": "发送私信",
+  "Set Channel Topic": "设置频道主题",
+  "Shell command": "Shell 命令",
+  "Skill read": "读取技能",
+  "Securely sending your identity to the mobile app.":
+    "正在安全地将你的身份发送到移动端。",
+  "Setting up your community...": "正在设置你的社区…",
+  "Signed response copied. Paste it into the Buzz admin console.":
+    "已复制签名响应，请粘贴到 Buzz 管理控制台。",
+  "Square images work best. GIF, PNG, JPEG, and WebP files are supported.":
+    "正方形图片效果最佳，支持 GIF、PNG、JPEG 和 WebP 文件。",
+  "Star channel": "收藏频道",
+  Starred: "已收藏",
+  "Start a discussion by creating the first post.":
+    "发布第一篇帖子，开始讨论。",
+  "Start a huddle to talk to them.": "发起语音会议与对方交流。",
+  "Start agent": "启动智能体",
+  "Start direct message": "发起私信",
+  "Start huddle": "发起语音会议",
+  "Start now": "立即启动",
+  "Start on launch": "启动应用时运行",
+  "Start pairing": "开始配对",
+  "Start with a conversation, or set everything up yourself.":
+    "从对话开始，或自行完成全部设置。",
+  "System messages (kind 40099)": "系统消息（类型 40099）",
+  "System Prompt": "系统提示词",
+  Start: "开始",
+  Suppressed: "已隐藏",
+  "That code doesn't match. Check the code and try again.":
+    "验证码不匹配，请检查后重试。",
+  "The agent's harness reported an internal error. For Codex agents this can mean the configured model isn't supported by your installed codex-acp — check the model in `~/.codex/config.toml` or upgrade the adapter (`brew upgrade codex-acp`).":
+    "智能体运行环境报告内部错误。对于 Codex 智能体，这可能表示已安装的 codex-acp 不支持当前模型；请检查 `~/.codex/config.toml` 中的模型，或运行 `brew upgrade codex-acp` 升级适配器。",
+  "The agents you have chosen for this app. Use them to create teams and launch agents.":
+    "你为此应用选择的智能体，可用于创建团队和启动智能体。",
+  "The configured model is not available — open agent settings and select a different one from the dropdown.":
+    "配置的模型不可用，请打开智能体设置并从下拉列表选择其他模型。",
+  "Tell us what went wrong, or share general feedback.":
+    "告诉我们哪里出了问题，或分享其他反馈。",
+  "These features are functional but still being refined. Enable them to try new capabilities early.":
+    "这些功能已经可用，但仍在持续完善。启用后即可提前体验新能力。",
+  Thought: "思考",
+  "Thread replies": "话题回复",
+  "Tight fit": "略显拥挤",
+  "Too large": "过大",
+  "This agent is active in a channel you haven't joined, so its activity can't be opened from here.":
+    "此智能体正在你尚未加入的频道中活动，因此无法从这里打开。",
+  "This binding link has expired. Request a new one from the requesting app.":
+    "此绑定链接已过期，请从发起请求的应用重新获取。",
+  "This is the agent identity used by `buzz-acp`.":
+    "这是 `buzz-acp` 使用的智能体身份。",
+  "This project item could not be found.": "找不到此项目条目。",
+  "Thread with {{value}}": "与 {{value}} 的话题",
+  Title: "标题",
+  "Unknown channel": "未知频道",
+  "When an agent finishes a job.": "智能体完成任务时。",
+  "When an agent job fails.": "智能体任务失败时。",
+  "When an agent picks up a job.": "智能体开始处理任务时。",
+  "When an approval or reminder is waiting on you.":
+    "有审批或提醒等待你处理时。",
+  "When someone messages you directly.": "有人直接给你发消息时。",
+  "When someone replies in a thread you follow or posted in.":
+    "有人回复你关注或参与过的话题时。",
+  "When someone tags you in a channel.": "有人在频道中提及你时。",
+  "While an agent works through a job.": "智能体正在处理任务时。",
+  Webhook: "Webhook",
+  "YAML-defined automations with approval gates":
+    "使用 YAML 定义并带有审批步骤的自动化工作流",
+  "Voice settings for {{value}}": "{{value}} 的语音设置",
+  Wave: "挥手",
+  "What's on your mind?": "分享你的想法…",
+  "What's your status?": "你的状态是什么？",
+  "What this {{value}} is for": "此{{value}}的用途",
+  "Workspace repositories:": "工作区仓库：",
+  "Write a message…": "输入消息…",
+  "joined the channel": "加入了频道",
+  "{{value}} channel member{{value}}": "{{value}} 位频道成员{{value}}",
+  "{{value}} mentioned you": "{{value}} 提及了你",
+  "{{value}} new message{{value}}": "{{value}} 条新消息{{value}}",
+  "{{value}} reminders are due": "{{value}} 条提醒已到期",
+  "{{value}} requested approval": "{{value}} 请求你审批",
+  "{{value}}秒": "{{value}}秒",
+  "{{value}}分{{value}}秒": "{{value}}分{{value}}秒",
+  "{{value}}小时{{value}}分{{value}}秒": "{{value}}小时{{value}}分{{value}}秒",
+  "A workflow is waiting for your approval.": "有一个工作流正在等待你审批。",
+  "Something in Buzz needs your attention.": "Buzz 中有事项需要你处理。",
+  "Your mobile app is now connected to this relay.":
+    "移动端现已连接到此 Relay。",
+  'auth tag label must be "auth" (got "{{value}}")':
+    "身份验证标签必须为“auth”（实际为“{{value}}”）",
+  "buzz-desktop: failed to locate app for relaunch: {{value}}":
+    "buzz-desktop：找不到要重新启动的应用：{{value}}",
+  "installInstructionsUrl must start with https:// or http://, got: {:?}":
+    "installInstructionsUrl 必须以 https:// 或 http:// 开头，实际为：{:?}",
+  "kind:39000 missing required `d` tag": "kind:39000 缺少必需的 `d` 标签",
+  "kind:39002 missing required `d` tag": "kind:39002 缺少必需的 `d` 标签",
+  "observer frame missing `agent` tag": "观察记录缺少 `agent` 标签",
+  "observer frame missing `frame` tag": "观察记录缺少 `frame` 标签",
+  "{{value}} has a runtime error. Open runtime details.":
+    "{{value}} 发生运行环境错误，请打开运行环境详情。",
+  "`X-Webhook-Secret`": "`X-Webhook-Secret`",
+  "AuxiliaryPanelBody requires `mode` or an AuxiliaryPanel ancestor":
+    "AuxiliaryPanelBody 需要 `mode` 或 AuxiliaryPanel 上下文",
+  "buzz-agent model tuning": "buzz-agent 模型调优",
+  "event not found": "未找到事件",
+  "to a channel so desktop chat can `@mention` it. Running agents pick up new channels automatically via membership notifications.":
+    "添加到频道后，桌面聊天即可通过 `@mention` 提及它。运行中的智能体会通过成员通知自动加入新频道。",
+};

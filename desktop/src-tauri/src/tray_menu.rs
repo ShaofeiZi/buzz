@@ -13,6 +13,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+use crate::initial_window::show_main_window;
+use crate::native_i18n::{is_simplified_chinese, text};
 #[cfg(target_os = "macos")]
 use objc2::MainThreadMarker;
 #[cfg(target_os = "macos")]
@@ -53,21 +55,21 @@ fn preview_activities() -> Option<Vec<TrayAgentActivity>> {
             agent_name: "Scout".into(),
             channel_id: "tray-preview-planning".into(),
             channel_name: "planning".into(),
-            elapsed: format_elapsed(Duration::from_secs(192) + preview_elapsed),
+            elapsed_ms: (Duration::from_secs(192) + preview_elapsed).as_millis() as u64,
         },
         TrayAgentActivity {
             activity_id: "tray-preview-planning-builder".into(),
             agent_name: "Builder".into(),
             channel_id: "tray-preview-planning".into(),
             channel_name: "planning".into(),
-            elapsed: format_elapsed(Duration::from_secs(68) + preview_elapsed),
+            elapsed_ms: (Duration::from_secs(68) + preview_elapsed).as_millis() as u64,
         },
         TrayAgentActivity {
             activity_id: "tray-preview-mobile-reviewer".into(),
             agent_name: "Reviewer".into(),
             channel_id: "tray-preview-mobile".into(),
             channel_name: "mobile".into(),
-            elapsed: format_elapsed(Duration::from_secs(31) + preview_elapsed),
+            elapsed_ms: (Duration::from_secs(31) + preview_elapsed).as_millis() as u64,
         },
     ])
 }
@@ -83,12 +85,28 @@ fn preview_recent_activities() -> Option<Vec<TrayAgentActivity>> {
         agent_name: "Architect".into(),
         channel_id: "tray-preview-design".into(),
         channel_name: "design".into(),
-        elapsed: "4m 25s".into(),
+        elapsed_ms: Duration::from_secs(265).as_millis() as u64,
     }])
 }
 
 fn format_elapsed(elapsed: Duration) -> String {
     let total_seconds = elapsed.as_secs();
+    if is_simplified_chinese() {
+        if total_seconds < 60 {
+            return format!("{total_seconds}秒");
+        }
+
+        let seconds = total_seconds % 60;
+        let total_minutes = total_seconds / 60;
+        if total_minutes < 60 {
+            return format!("{total_minutes}分{seconds}秒");
+        }
+
+        let minutes = total_minutes % 60;
+        let hours = total_minutes / 60;
+        return format!("{hours}小时{minutes}分{seconds}秒");
+    }
+
     if total_seconds < 60 {
         return format!("{total_seconds}s");
     }
@@ -182,14 +200,14 @@ fn tray_bee_icon() -> Image<'static> {
 }
 
 /// A running agent and its current channel.
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TrayAgentActivity {
     activity_id: String,
     agent_name: String,
     channel_id: String,
     channel_name: String,
-    elapsed: String,
+    elapsed_ms: u64,
 }
 
 struct TrayActivityMenuItem<R: Runtime> {
@@ -205,6 +223,7 @@ struct TrayActionQueue {
 
 struct TrayMenuState<R: Runtime> {
     activity_items: Mutex<Vec<TrayActivityMenuItem<R>>>,
+    activities: Mutex<(Vec<TrayAgentActivity>, Vec<TrayAgentActivity>)>,
     action_queue: Mutex<TrayActionQueue>,
 }
 
@@ -218,23 +237,6 @@ pub enum TrayAction {
         #[serde(rename = "communityGeneration")]
         community_generation: u64,
     },
-}
-
-pub(crate) fn show_main_window<R: Runtime>(app: &AppHandle<R>) {
-    let Some(window) = app.get_webview_window("main") else {
-        return;
-    };
-    if let Err(error) = window.unminimize() {
-        eprintln!("buzz-desktop: failed to restore main window from tray: {error}");
-        return;
-    }
-    if let Err(error) = window.show() {
-        eprintln!("buzz-desktop: failed to show main window from tray: {error}");
-        return;
-    }
-    if let Err(error) = window.set_focus() {
-        eprintln!("buzz-desktop: failed to focus main window from tray: {error}");
-    }
 }
 
 fn queue_tray_action<R: Runtime>(app: &AppHandle<R>, mut action: TrayAction) {
@@ -263,7 +265,8 @@ fn append_separator<R: Runtime>(app: &AppHandle<R>, menu: &Menu<R>) -> tauri::Re
 }
 
 fn agent_item_label(activity: &TrayAgentActivity) -> String {
-    let primary = format!("{} · {}", activity.agent_name, activity.elapsed);
+    let elapsed = format_elapsed(Duration::from_millis(activity.elapsed_ms));
+    let primary = format!("{} · {elapsed}", activity.agent_name);
 
     #[cfg(target_os = "macos")]
     {
@@ -307,11 +310,16 @@ fn build_menu<R: Runtime>(
     let mut activity_items =
         Vec::with_capacity(activities.len().saturating_add(recent_activities.len()));
 
-    let running = MenuItem::new(app, "Running", false, None::<&str>)?;
+    let running = MenuItem::new(app, text("Running", "运行中"), false, None::<&str>)?;
     menu.append(&running)?;
 
     if activities.is_empty() {
-        let empty = MenuItem::new(app, "No agents are running", false, None::<&str>)?;
+        let empty = MenuItem::new(
+            app,
+            text("No agents are running", "没有正在运行的智能体"),
+            false,
+            None::<&str>,
+        )?;
         menu.append(&empty)?;
     } else {
         append_activity_items(app, &menu, activities, &mut activity_items)?;
@@ -319,7 +327,7 @@ fn build_menu<R: Runtime>(
 
     if !recent_activities.is_empty() {
         append_separator(app, &menu)?;
-        let recent = MenuItem::new(app, "Recent", false, None::<&str>)?;
+        let recent = MenuItem::new(app, text("Recent", "最近"), false, None::<&str>)?;
         menu.append(&recent)?;
         append_activity_items(app, &menu, recent_activities, &mut activity_items)?;
     }
@@ -328,7 +336,7 @@ fn build_menu<R: Runtime>(
     menu.append(&MenuItem::with_id(
         app,
         NEW_CHANNEL_ID,
-        "New Channel",
+        text("New Channel", "新建频道"),
         true,
         None::<&str>,
     )?)?;
@@ -336,7 +344,7 @@ fn build_menu<R: Runtime>(
     menu.append(&MenuItem::with_id(
         app,
         OPEN_BUZZ_ID,
-        "Open Buzz",
+        text("Open Buzz", "打开 Buzz"),
         true,
         None::<&str>,
     )?)?;
@@ -344,7 +352,7 @@ fn build_menu<R: Runtime>(
     menu.append(&MenuItem::with_id(
         app,
         QUIT_ID,
-        "Quit Buzz",
+        text("Quit Buzz", "退出 Buzz"),
         true,
         None::<&str>,
     )?)?;
@@ -481,6 +489,7 @@ pub fn init<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
     let (menu, activity_items) = build_menu(app, activities, recent_activities)?;
     app.manage(TrayMenuState {
         activity_items: Mutex::new(activity_items),
+        activities: Mutex::new((activities.to_vec(), recent_activities.to_vec())),
         action_queue: Mutex::new(TrayActionQueue {
             community_generation: 0,
             pending_actions: Vec::new(),
@@ -572,6 +581,11 @@ pub fn update_tray_agent_activity<R: Runtime>(
         .as_deref()
         .unwrap_or(&recent_activities);
     let state = app.state::<TrayMenuState<R>>();
+    *state
+        .activities
+        .lock()
+        .map_err(|_| "Buzz tray activity state is unavailable".to_string())? =
+        (activities.to_vec(), recent_activities.to_vec());
     let mut activity_items = state
         .activity_items
         .lock()
@@ -612,9 +626,34 @@ pub fn update_tray_agent_activity<R: Runtime>(
     Ok(())
 }
 
+pub(crate) fn refresh_locale<R: Runtime>(app: &AppHandle<R>) -> Result<(), String> {
+    let state = app.state::<TrayMenuState<R>>();
+    let (activities, recent_activities) = state
+        .activities
+        .lock()
+        .map_err(|_| "Buzz tray activity state is unavailable".to_string())?
+        .clone();
+    update_tray_agent_activity(app.clone(), activities, recent_activities)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{requeue_actions, TrayAction, TrayActionQueue};
+    use super::{format_elapsed, requeue_actions, TrayAction, TrayActionQueue};
+    use crate::native_i18n::set_test_locale;
+    use std::time::Duration;
+
+    #[test]
+    fn formats_elapsed_time_for_native_locale() {
+        set_test_locale("en");
+        assert_eq!(format_elapsed(Duration::from_secs(3_725)), "1h 2m 5s");
+
+        set_test_locale("zh-CN");
+        assert_eq!(format_elapsed(Duration::from_secs(3_725)), "1小时2分5秒");
+        assert_eq!(format_elapsed(Duration::from_secs(65)), "1分5秒");
+        assert_eq!(format_elapsed(Duration::from_secs(9)), "9秒");
+
+        set_test_locale("en");
+    }
 
     #[test]
     fn open_channel_action_serializes_with_frontend_field_names() {

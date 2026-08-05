@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/shared/lib/cn";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import {
   isolateSelectionForBlockFormatting,
@@ -254,14 +255,16 @@ export const FormattingToolbar = React.memo(function FormattingToolbar({
     const hasSelection = from !== to;
 
     if (hasSelection) {
-      const url = window.prompt("Enter URL:");
+      const url = window.prompt(translateCurrentUserVisibleText("Enter URL:"));
       if (url) {
         editor.chain().focus().setLink({ href: url }).run();
       }
     } else {
-      const url = window.prompt("Enter URL:");
+      const url = window.prompt(translateCurrentUserVisibleText("Enter URL:"));
       if (url) {
-        const label = window.prompt("Link text:", url) || url;
+        const label =
+          window.prompt(translateCurrentUserVisibleText("Link text:"), url) ||
+          url;
         editor.chain().focus().insertContent(`[${label}](${url})`).run();
       }
     }

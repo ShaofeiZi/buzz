@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { importIdentity } from "@/shared/api/tauriIdentity";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { useSystemColorScheme } from "@/shared/theme/useSystemColorScheme";
 import { Button } from "@/shared/ui/button";
 import { StartupWindowDragRegion } from "@/shared/ui/StartupWindowDragRegion";
@@ -14,7 +15,9 @@ export function KeyringLockedScreen() {
 
   const handleReimportClick = React.useCallback(() => {
     const confirmed = window.confirm(
-      "Importing a different nsec replaces the identity currently locked in the keyring for this install. The previous identity will no longer be accessible. Continue?",
+      translateCurrentUserVisibleText(
+        "Importing a different nsec replaces the identity currently locked in the keyring for this install. The previous identity will no longer be accessible. Continue?",
+      ),
     );
     if (confirmed) {
       setShowImport(true);

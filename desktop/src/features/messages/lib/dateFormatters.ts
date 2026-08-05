@@ -9,37 +9,23 @@
  * - `isSameDay` — compare two unix-second timestamps.
  */
 
-const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-});
+import {
+  getCurrentLiteralLocale,
+  translateCurrentUserVisibleText,
+} from "@/shared/i18n/literalTranslation";
 
 const DAY_PERIOD_SUFFIX_RE = /[\s\u00a0\u202f]*(?:AM|PM)$/i;
 
-const FULL_DATE_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-const WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-});
-
-const LONG_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-});
-
-const SHORT_MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-});
+function dateTimeFormatter(options: Intl.DateTimeFormatOptions) {
+  return new Intl.DateTimeFormat(getCurrentLiteralLocale(), options);
+}
 
 /** Short clock time, e.g. "2:34 PM". */
 export function formatTime(unixSeconds: number): string {
-  return TIME_FORMATTER.format(new Date(unixSeconds * 1_000));
+  return dateTimeFormatter({
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(unixSeconds * 1_000));
 }
 
 /** Short clock time with the AM/PM marker removed, e.g. "2:34". */
@@ -49,7 +35,14 @@ export function formatTimeWithoutDayPeriod(time: string): string {
 
 /** Full date + time for tooltips, e.g. "Wednesday, April 2, 2026 at 2:34 PM". */
 export function formatFullDateTime(unixSeconds: number): string {
-  return FULL_DATE_TIME_FORMATTER.format(new Date(unixSeconds * 1_000));
+  return dateTimeFormatter({
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(unixSeconds * 1_000));
 }
 
 /**
@@ -62,18 +55,27 @@ export function formatDayHeading(unixSeconds: number): string {
   const now = new Date();
 
   if (isSameDayDate(date, now)) {
-    return "Today";
+    return translateCurrentUserVisibleText("Today");
   }
 
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
   if (isSameDayDate(date, yesterday)) {
-    return "Yesterday";
+    return translateCurrentUserVisibleText("Yesterday");
   }
 
-  const dateLabel = `${WEEKDAY_FORMATTER.format(date)}, ${formatMonthDayOrdinal(
+  if (getCurrentLiteralLocale() === "zh-CN") {
+    return dateTimeFormatter({
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      ...(date.getFullYear() === now.getFullYear() ? {} : { year: "numeric" }),
+    }).format(date);
+  }
+
+  const dateLabel = `${dateTimeFormatter({ weekday: "long" }).format(date)}, ${formatMonthDayOrdinal(
     date,
-    LONG_MONTH_FORMATTER,
+    dateTimeFormatter({ month: "long" }),
   )}`;
   return date.getFullYear() === now.getFullYear()
     ? dateLabel
@@ -99,9 +101,15 @@ export function startOfLocalDaySeconds(unixSeconds: number): number {
 
 /** Short month + ordinal day, e.g. "May 19th". */
 export function formatShortMonthDayOrdinal(unixSeconds: number): string {
+  if (getCurrentLiteralLocale() === "zh-CN") {
+    return dateTimeFormatter({
+      month: "short",
+      day: "numeric",
+    }).format(new Date(unixSeconds * 1_000));
+  }
   return formatMonthDayOrdinal(
     new Date(unixSeconds * 1_000),
-    SHORT_MONTH_FORMATTER,
+    dateTimeFormatter({ month: "short" }),
   );
 }
 
@@ -114,6 +122,24 @@ export function formatThreadSummaryLastReplyTime(
   nowSeconds = Date.now() / 1_000,
 ): string {
   const diff = Math.max(0, nowSeconds - unixSeconds);
+
+  if (getCurrentLiteralLocale() === "zh-CN") {
+    const relativeTime = new Intl.RelativeTimeFormat("zh-CN", {
+      numeric: "auto",
+    });
+    if (diff < 60) return relativeTime.format(0, "second");
+    if (diff < 3_600)
+      return relativeTime.format(-Math.floor(diff / 60), "minute");
+    if (diff < 86_400)
+      return relativeTime.format(-Math.floor(diff / 3_600), "hour");
+    if (diff < 604_800)
+      return relativeTime.format(-Math.floor(diff / 86_400), "day");
+
+    return dateTimeFormatter({
+      month: "short",
+      day: "numeric",
+    }).format(new Date(unixSeconds * 1_000));
+  }
 
   if (diff < 60) return "just now";
   if (diff < 3_600) return formatAgo(Math.floor(diff / 60), "minute");

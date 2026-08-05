@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { afterEach, beforeEach } from "node:test";
 
 import {
   formatDayHeading,
@@ -8,6 +8,15 @@ import {
   formatTimeWithoutDayPeriod,
   startOfLocalDaySeconds,
 } from "./dateFormatters.ts";
+import { setCurrentLiteralLocale } from "../../../shared/i18n/literalTranslation.ts";
+
+beforeEach(() => {
+  setCurrentLiteralLocale("en");
+});
+
+afterEach(() => {
+  setCurrentLiteralLocale("en");
+});
 
 function localUnixSeconds(year, monthIndex, day) {
   return new Date(year, monthIndex, day, 12).getTime() / 1_000;
@@ -113,6 +122,15 @@ test("formatThreadSummaryLastReplyTime uses ordinal dates for older replies", ()
   const replyAt = localUnixSeconds(2026, 4, 19);
 
   assert.equal(formatThreadSummaryLastReplyTime(replyAt, now), "on May 19th");
+});
+
+test("formatThreadSummaryLastReplyTime localizes relative and older Chinese dates", () => {
+  setCurrentLiteralLocale("zh-CN");
+  const now = localUnixSeconds(2026, 5, 15);
+  const replyAt = localUnixSeconds(2026, 4, 19);
+
+  assert.equal(formatThreadSummaryLastReplyTime(now - 60, now), "1分钟前");
+  assert.equal(formatThreadSummaryLastReplyTime(replyAt, now), "5月19日");
 });
 
 test("formatDayHeading omits the year for current-year dates", () => {

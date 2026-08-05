@@ -3,6 +3,7 @@ import {
   formatNotificationTitle,
   truncateNotificationBody,
 } from "@/features/notifications/lib/notificationFormat";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 
 export type NotificationChannel = Pick<Channel, "id" | "name" | "channelType">;
 
@@ -38,12 +39,14 @@ export function notificationTitle(item: FeedItem, senderName?: string) {
       : null;
 
   if (item.channelType === "dm") {
-    return senderName || "Direct message";
+    return senderName || translateCurrentUserVisibleText("Direct message");
   }
 
   if (item.category === "mention") {
     return formatNotificationTitle({
-      prefix: senderName ? `${senderName} mentioned you` : "@Mention",
+      prefix: senderName
+        ? translateCurrentUserVisibleText(`${senderName} mentioned you`)
+        : translateCurrentUserVisibleText("@Mention"),
       channelLabel,
     });
   }
@@ -51,14 +54,16 @@ export function notificationTitle(item: FeedItem, senderName?: string) {
   if (item.kind === 46010) {
     return formatNotificationTitle({
       prefix: senderName
-        ? `${senderName} requested approval`
-        : "Approval Requested",
+        ? translateCurrentUserVisibleText(`${senderName} requested approval`)
+        : translateCurrentUserVisibleText("Approval Requested"),
       channelLabel,
     });
   }
 
   return formatNotificationTitle({
-    prefix: senderName ? senderName : "Needs Action",
+    prefix: senderName
+      ? senderName
+      : translateCurrentUserVisibleText("Needs Action"),
     channelLabel,
   });
 }
@@ -66,8 +71,12 @@ export function notificationTitle(item: FeedItem, senderName?: string) {
 export function notificationBody(item: FeedItem) {
   const fallback =
     item.kind === 46010
-      ? "A workflow is waiting for your approval."
-      : "Something in Buzz needs your attention.";
+      ? translateCurrentUserVisibleText(
+          "A workflow is waiting for your approval.",
+        )
+      : translateCurrentUserVisibleText(
+          "Something in Buzz needs your attention.",
+        );
   return truncateNotificationBody(item.content, fallback);
 }
 

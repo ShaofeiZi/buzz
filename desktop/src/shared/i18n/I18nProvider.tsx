@@ -1,4 +1,5 @@
 import * as React from "react";
+import { invoke, isTauri } from "@tauri-apps/api/core";
 
 import {
   formatMessage,
@@ -9,6 +10,7 @@ import {
   type SupportedLocale,
   type TranslationParams,
 } from "./i18n";
+import { setCurrentLiteralLocale } from "./literalTranslation";
 import type { MessageKey } from "./messages/en";
 
 type I18nContextValue = {
@@ -40,10 +42,16 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [systemLanguages, setSystemLanguages] =
     React.useState<readonly string[]>(browserLanguages);
   const locale = resolveLocale(preference, systemLanguages);
+  setCurrentLiteralLocale(locale);
 
   React.useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = "ltr";
+    if (isTauri()) {
+      void invoke("set_app_locale", { locale }).catch(() => {
+        // Native menu localization is best effort; the WebView stays localized.
+      });
+    }
   }, [locale]);
 
   React.useEffect(() => {

@@ -5,6 +5,7 @@ import type {
   PresenceLookup,
   RelayAgent,
 } from "@/shared/api/types";
+import { translateCurrentUserVisibleText } from "@/shared/i18n/literalTranslation";
 import { normalizePubkey } from "@/shared/lib/pubkey";
 
 type DeleteManagedAgentInput = {
@@ -170,9 +171,11 @@ export async function deleteManagedAgentWithRules({
 
         if (!skipRemoteDeleteConfirm) {
           const confirmed = window.confirm(
-            "Shutdown command sent, but the agent may still be running. " +
-              "Deleting now removes the local record — the remote deployment " +
-              "will be orphaned if shutdown hasn't completed. Continue?",
+            translateCurrentUserVisibleText(
+              "Shutdown command sent, but the agent may still be running. " +
+                "Deleting now removes the local record — the remote deployment " +
+                "will be orphaned if shutdown hasn't completed. Continue?",
+            ),
           );
           if (!confirmed) {
             return { cancelled: true };
@@ -181,8 +184,10 @@ export async function deleteManagedAgentWithRules({
       } else {
         if (!skipRemoteDeleteConfirm) {
           const confirmed = window.confirm(
-            "This agent is offline but the remote deployment may still exist. " +
-              "Deleting removes the local management record. Continue?",
+            translateCurrentUserVisibleText(
+              "This agent is offline but the remote deployment may still exist. " +
+                "Deleting removes the local management record. Continue?",
+            ),
           );
           if (!confirmed) {
             return { cancelled: true };
@@ -192,8 +197,10 @@ export async function deleteManagedAgentWithRules({
     } else {
       if (!skipRemoteDeleteConfirm) {
         const confirmed = window.confirm(
-          "This agent is deployed but not in any channel. " +
-            "Deleting will orphan the remote deployment (it will keep running). Continue?",
+          translateCurrentUserVisibleText(
+            "This agent is deployed but not in any channel. " +
+              "Deleting will orphan the remote deployment (it will keep running). Continue?",
+          ),
         );
         if (!confirmed) {
           return { cancelled: true };

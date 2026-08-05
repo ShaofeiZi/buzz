@@ -1,11 +1,21 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { afterEach, beforeEach } from "node:test";
 
 import {
   eligibleFeedNotificationItems,
   enrichFeedItemChannel,
+  notificationBody,
   notificationTitle,
 } from "./feed.ts";
+import { setCurrentLiteralLocale } from "../../../shared/i18n/literalTranslation.ts";
+
+beforeEach(() => {
+  setCurrentLiteralLocale("en");
+});
+
+afterEach(() => {
+  setCurrentLiteralLocale("en");
+});
 
 const feedItem = (overrides = {}) => ({
   id: "event-id",
@@ -59,6 +69,32 @@ test("does not replace direct-message notification titles", () => {
   ]);
 
   assert.equal(notificationTitle(item, "Taylor"), "Taylor");
+});
+
+test("localizes generated notification copy without translating user content", () => {
+  setCurrentLiteralLocale("zh-CN");
+  const mention = feedItem({
+    category: "mention",
+    channelName: "general",
+    channelType: "stream",
+  });
+  const approval = feedItem({
+    content: "",
+    kind: 46010,
+    channelName: "general",
+    channelType: "stream",
+  });
+
+  assert.equal(
+    notificationTitle(mention, "Alice"),
+    "Alice 提及了你 · #general",
+  );
+  assert.equal(
+    notificationTitle(approval, "Alice"),
+    "Alice 请求你审批 · #general",
+  );
+  assert.equal(notificationBody(approval), "有一个工作流正在等待你审批。");
+  assert.equal(notificationBody(mention), "Please review");
 });
 
 const feedResponse = (mentions, needsAction = []) => ({
