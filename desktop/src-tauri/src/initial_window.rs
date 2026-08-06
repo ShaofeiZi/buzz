@@ -6,19 +6,17 @@ use tauri::{AppHandle, Manager, Runtime};
 pub(crate) const INITIAL_RENDER_READY_EVENT: &str = "initial-render-ready";
 
 #[cfg(target_os = "macos")]
-pub(crate) fn schedule_initial_window_reveal<R: Runtime>(app: &AppHandle<R>) {
+pub(crate) fn schedule_initial_window_reveal<R: Runtime>(window: tauri::Window<R>) {
     use tauri::Listener as _;
 
-    let Some(webview_window) = app.get_webview_window("main") else {
-        return;
-    };
-    let window = webview_window.as_ref().window();
     set_initial_window_backing(&window);
 
     let (initial_render_tx, initial_render_rx) = tokio::sync::oneshot::channel();
-    app.once(INITIAL_RENDER_READY_EVENT, move |_| {
-        let _ = initial_render_tx.send(());
-    });
+    window
+        .app_handle()
+        .once(INITIAL_RENDER_READY_EVENT, move |_| {
+            let _ = initial_render_tx.send(());
+        });
 
     tauri::async_runtime::spawn(async move {
         wait_for_stable_initial_window_geometry(&window).await;

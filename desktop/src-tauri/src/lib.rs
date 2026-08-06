@@ -140,6 +140,11 @@ pub fn run() {
                     // on macOS/Windows.
                     linux_media::enable_media_capture(&webview);
 
+                    #[cfg(target_os = "macos")]
+                    {
+                        schedule_initial_window_reveal(webview.window());
+                    }
+
                     #[cfg(not(target_os = "macos"))]
                     {
                         reveal_initial_window(&webview.window());
@@ -267,8 +272,6 @@ pub fn run() {
         .manage(terminal_runtime::TerminalSessions::default())
         .setup(move |app| {
             let app_handle = app.handle().clone();
-            #[cfg(target_os = "macos")]
-            schedule_initial_window_reveal(&app_handle);
             #[cfg(target_os = "macos")]
             tray_menu::init(&app_handle)?;
 
