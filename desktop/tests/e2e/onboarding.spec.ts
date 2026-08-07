@@ -637,6 +637,64 @@ test("first-launch key import continues to machine setup", async ({ page }) => {
   await expect(page.getByTestId("app-loading-gate")).toHaveCount(0);
 });
 
+test("community identity import resumes machine setup after restart", async ({
+  page,
+}) => {
+  await seedActiveIdentity(page, TEST_IDENTITIES.alice);
+  await page.addInitScript(
+    ({ previousPubkey, relayUrl, transactionStorageKey }) => {
+      const communityId = "identity-import-community";
+      const timestamp = new Date().toISOString();
+      window.localStorage.setItem(
+        `buzz-machine-onboarding-complete.v2:${previousPubkey}`,
+        "true",
+      );
+      window.localStorage.setItem(
+        "buzz-communities",
+        JSON.stringify([
+          {
+            id: communityId,
+            name: "Identity Import",
+            relayUrl,
+            pubkey: previousPubkey,
+            addedAt: timestamp,
+          },
+        ]),
+      );
+      window.localStorage.setItem("buzz-active-community-id", communityId);
+      window.localStorage.setItem(
+        transactionStorageKey,
+        JSON.stringify({
+          id: "identity-import-transaction",
+          source: "first-community",
+          stage: "connecting",
+          relayUrl,
+          communityName: "Identity Import",
+          communityId,
+          addedCommunity: true,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+        }),
+      );
+    },
+    {
+      previousPubkey: BLANK_TYLER_IDENTITY.pubkey,
+      relayUrl: "wss://identity-import.example.com",
+      transactionStorageKey: COMMUNITY_ONBOARDING_TRANSACTION_STORAGE_KEY,
+    },
+  );
+  await installMockBridge(page, undefined, {
+    relayWsUrl: "wss://identity-import.example.com",
+    skipCommunitySeed: true,
+    skipOnboardingSeed: true,
+  });
+  await page.goto("/");
+
+  await expect(page.getByTestId("onboarding-page-2")).toBeVisible();
+  await expect(page.getByTestId("machine-onboarding-gate")).toBeVisible();
+  await expect(page.getByTestId("app-loading-gate")).toHaveCount(0);
+});
+
 test("first-launch encrypted backup import asks for a passphrase and continues", async ({
   page,
 }) => {
@@ -2476,6 +2534,63 @@ test("membership denial on community profile save offers recovery", async ({
       ),
     )
     .toContain("wss://invited.example.com");
+});
+
+test("community membership recovery import continues machine setup", async ({
+  page,
+}) => {
+  await seedActiveIdentity(page, BLANK_TYLER_IDENTITY);
+  await page.addInitScript(
+    ({ pubkey, transactionStorageKey }) => {
+      window.localStorage.setItem(
+        `buzz-machine-onboarding-complete.v2:${pubkey}`,
+        "true",
+      );
+      const timestamp = new Date().toISOString();
+      window.localStorage.setItem(
+        transactionStorageKey,
+        JSON.stringify({
+          id: "txn-membership-import",
+          source: "first-community",
+          stage: "profile",
+          relayUrl: "wss://denied.example.com",
+          communityName: "Denied",
+          communityId: "e2e-default-community",
+          createdAt: timestamp,
+          updatedAt: timestamp,
+        }),
+      );
+    },
+    {
+      pubkey: BLANK_TYLER_IDENTITY.pubkey,
+      transactionStorageKey: COMMUNITY_ONBOARDING_TRANSACTION_STORAGE_KEY,
+    },
+  );
+  await installMockBridge(
+    page,
+    {
+      profileUpdateError:
+        "relay returned 403 Forbidden: You must be a relay member to access this relay",
+    },
+    {
+      relayWsUrl: "wss://denied.example.com",
+      skipOnboardingSeed: true,
+    },
+  );
+  await page.goto("/");
+
+  await page.getByTestId("community-profile-name-key").fill("Kalvin");
+  await page.getByTestId("community-profile-next").click();
+  await expect(page.getByTestId("membership-denied")).toBeVisible();
+  await page.getByTestId("membership-denied-change-key").click();
+
+  const importedNsec = nsecEncode(hexToBytes(TEST_IDENTITIES.alice.privateKey));
+  await page.getByTestId("membership-denied-nsec-input").fill(importedNsec);
+  await page.getByTestId("membership-denied-import-key").click();
+
+  await expect(page.getByTestId("onboarding-page-2")).toBeVisible();
+  await expect(page.getByTestId("machine-onboarding-gate")).toBeVisible();
+  await expect(page.getByTestId("app-loading-gate")).toHaveCount(0);
 });
 
 test("identity fallback text does not count as a real onboarding name", async ({

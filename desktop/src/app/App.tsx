@@ -305,6 +305,7 @@ function CommunityApp({
     removeCommunity,
     switchCommunity,
     reconnectCommunity,
+    updateCommunity,
   } = useCommunities();
   const communityOnboarding = useCommunityOnboarding();
   const connectingTransactionRef = useRef<string | null>(null);
@@ -378,6 +379,9 @@ function CommunityApp({
     if (connectingTransactionRef.current === transaction.id) return;
     connectingTransactionRef.current = transaction.id;
     if (transaction.communityId) {
+      if (currentPubkey) {
+        updateCommunity(transaction.communityId, { pubkey: currentPubkey });
+      }
       await transitionCommunity(transaction.communityId);
       return;
     }
@@ -410,6 +414,7 @@ function CommunityApp({
     currentPubkey,
     reconnectCommunity,
     transitionCommunity,
+    updateCommunity,
   ]);
 
   const handleCommunityOnboardingCancel = useCallback(async () => {
@@ -596,6 +601,7 @@ function CommunityApp({
 function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
   const { activeCommunity } = useCommunities();
   const communityOnboarding = useCommunityOnboarding();
+  const transaction = communityOnboarding.transaction;
   const machine = useMachineOnboardingState({
     activeCommunityPubkey: activeCommunity
       ? (activeCommunity.pubkey ?? null)
@@ -606,6 +612,22 @@ function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
     useState<MachineOnboardingPage>();
   const [postOnboardingNav, setPostOnboardingNav] =
     useState<PostOnboardingNavigation | null>(null);
+
+  const shouldResumeCommunityIdentityImport =
+    transaction?.stage === "connecting" &&
+    transaction.communityId === activeCommunity?.id &&
+    Boolean(machine.currentPubkey) &&
+    Boolean(activeCommunity?.pubkey) &&
+    machine.currentPubkey !== activeCommunity?.pubkey;
+  useEffect(() => {
+    if (!shouldResumeCommunityIdentityImport || !machine.currentPubkey) return;
+    machine.continueWithIdentity(machine.currentPubkey);
+    setMachineInitialPage("setup");
+  }, [
+    machine.continueWithIdentity,
+    machine.currentPubkey,
+    shouldResumeCommunityIdentityImport,
+  ]);
 
   const reopenMachineConfig = useCallback(() => {
     setMachineInitialPage("config");
@@ -687,7 +709,6 @@ function MachineBootstrap({ sharedIdentity }: { sharedIdentity: boolean }) {
   // A community deep link that arrived before machine onboarding finished is
   // persisted immediately and acknowledged here. Invite claiming waits until
   // setup completes so it is signed only by the user's final identity.
-  const transaction = communityOnboarding.transaction;
   const isDeepLink =
     transaction?.source === "deep-link-join" ||
     transaction?.source === "deep-link-connect";
